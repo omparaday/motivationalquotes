@@ -54,7 +54,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   }
 
   Future<void> fetchAllQuotes() async {
-    Map<String, dynamic> quoteList = await getAllQuotes();
+    Map<String, dynamic> quoteList = await QuoteHelper.getAllQuotes();
     recentData.clear();
     quoteList?.forEach((key, value) {
       recentData.add(DecoratedText(key, value[value.keys.elementAt(0)], showSharePopup));

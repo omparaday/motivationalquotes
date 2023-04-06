@@ -24,7 +24,7 @@ class QuoteOfTheDay extends StatefulWidget {
 }
 class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserver {
   late quote.Quote? _quote;
-  late bool _isFavoriteQuote;
+  bool _isFavoriteQuote = false;
   late List<Widget> _favoriteQuoteWidgets;
   late List<quote.Quote> _favoriteQuoteList;
   late final NotificationService notificationService;
@@ -189,12 +189,12 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   }
 
   Future<void> toggleFavoriteQuote() async {
-    await quote.toggleFavoriteQuote(_quote?.name ?? "");
+    await quote.QuoteHelper.toggleFavoriteQuote(_quote?.name ?? "");
     fetchFavoriteQuotes();
   }
 
   Future<void> fetchFavoriteQuotes() async {
-    _favoriteQuoteList = await quote.getFavoriteQuotes();
+    _favoriteQuoteList = await quote.QuoteHelper.getFavoriteQuotes();
     _favoriteQuoteWidgets = <Widget>[];
     setState(() {
       for(quote.Quote q in _favoriteQuoteList.reversed) {
@@ -213,7 +213,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   }
 
   startFlow() async {
-    quote.Quote q = await quote.getNewQuote();
+    quote.Quote q = await quote.QuoteHelper.getNewQuote();
     setState(() {
     _quote = q;});
   }
