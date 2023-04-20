@@ -55,6 +55,8 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
         //nextTimeToNotify = new DateTime(nextTimeToNotify.year, nextTimeToNotify.month, nextTimeToNotify.day, 20, 30);
         int secondsToNotify = nextTimeToNotify.difference(DateTime.now()).inSeconds;
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
+        fetchFavoriteQuotes();
+        print('fetching favorite quotes');
         break;
       case AppLifecycleState.inactive:
         break;
@@ -68,6 +70,11 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   @override
   void initState() {
     super.initState();
+    quote.QuoteHelper.registerFavoriteUpdateCallback(
+            () {
+              print('inside callback');
+              fetchFavoriteQuotes();
+            });
     _dateKey = dailydata.getDateKeyFormat(DateTime.now());
     WidgetsBinding.instance.addObserver(this);
     Timer.periodic(Duration(hours: 1), (timer) async {
@@ -196,9 +203,11 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   Future<void> fetchFavoriteQuotes() async {
     _favoriteQuoteList = await quote.QuoteHelper.getFavoriteQuotes();
     _favoriteQuoteWidgets = <Widget>[];
+    print(_favoriteQuoteList.length);
     setState(() {
       for(quote.Quote q in _favoriteQuoteList.reversed) {
-        _favoriteQuoteWidgets.add(DecoratedText(q.name, q.content, showSharePopup));
+        print(q.name + " " + q.author);
+        _favoriteQuoteWidgets.add(new DecoratedText(q.name, q.content, q.author, showSharePopup));
       }
       _isFavoriteQuote = isFavoriteQuote(_quote?.name?? '');
     });

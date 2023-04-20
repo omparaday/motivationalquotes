@@ -57,7 +57,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
     Map<String, dynamic> quoteList = await QuoteHelper.getAllQuotes();
     recentData.clear();
     quoteList?.forEach((key, value) {
-      recentData.add(DecoratedText(key, value[value.keys.elementAt(0)], showSharePopup));
+      recentData.add(DecoratedText(key, value[value.keys.elementAt(0)], value.keys.elementAt(0), showSharePopup));
     });
     setState(() {
       recentData = recentData;

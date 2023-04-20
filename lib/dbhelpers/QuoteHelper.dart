@@ -6,15 +6,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 @JsonSerializable()
 class Quote {
-  final String name, content;
+  final String name, content, author;
 
-  Quote(this.name, this.content);
+  Quote(this.name, this.content, this.author);
 }
 const QUOTE_START_KEY = 'QUOTE_START';
 const QUOTES_FILE_PATH = "assets/quotes.json";
 class QuoteHelper {
+  static List<Function> callbacks = [];
   static List<Quote> favoriteQuoteList = [];
   static Map<String, dynamic> allQuoteFileContent = {};
+
+  static void registerFavoriteUpdateCallback(Function callback) {
+    callbacks.add(callback);
+  }
+
+  static void removeFavoriteUpdateCallback(Function callback) {
+    callbacks.remove(callback);
+  }
 
   static Future<Quote> getNewQuote() async {
     if (allQuoteFileContent.isEmpty) {
@@ -29,7 +38,8 @@ class QuoteHelper {
     prefs.setInt(QUOTE_START_KEY, (startPos + 1) % allQuoteFileContent.length);
     return Quote(quoteName,
         allQuoteFileContent[quoteName][allQuoteFileContent[quoteName].keys
-            .elementAt(0)]);
+            .elementAt(0)], allQuoteFileContent[quoteName].keys
+            .elementAt(0));
   }
 
   static Future<Map<String, dynamic>> getAllQuotes() async {
@@ -41,13 +51,6 @@ class QuoteHelper {
     String data = await rootBundle.loadString(QUOTES_FILE_PATH);
     allQuoteFileContent = Map<String, dynamic>.from(
         jsonDecode(data));
-  }
-
-  static Future<Quote> getQuoteForKey(String quoteName) async {
-    if (allQuoteFileContent.isEmpty) {
-      await fetchAllQuotes();
-    }
-    return Quote(quoteName, allQuoteFileContent[quoteName]);
   }
 
   static Future<List<Quote>> getFavoriteQuotes() async {
@@ -62,7 +65,7 @@ class QuoteHelper {
     }
     for (String key in favList) {
       quotelist.add(Quote(key,
-          allQuoteFileContent[key][allQuoteFileContent[key].keys.elementAt(0)]));
+          allQuoteFileContent[key][allQuoteFileContent[key].keys.elementAt(0)], allQuoteFileContent[key].keys.elementAt(0)));
     }
     favoriteQuoteList = quotelist;
     return favoriteQuoteList;
@@ -104,6 +107,9 @@ class QuoteHelper {
       }
     }
     prefs.setStringList("favorite_quotes", favList);
-    getFavoriteQuotes();
+    await getFavoriteQuotes();
+    for (Function callback in callbacks) {
+      callback();
+    }
   }
 }
