@@ -14,15 +14,12 @@ const double SMALL_FONTSIZE = 16;
 const double FONTSIZE = 18;
 const double MEDIUM_FONTSIZE = 20;
 const double LARGE_FONTSIZE = 28;
-
+const Color commonBG = Color.fromARGB(189, 242, 225, 242);
 void main() {
   runApp(new CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(
-        scaffoldBackgroundColor: CupertinoDynamicColor.withBrightness(
-          color: Color.fromARGB(255, 237, 223, 206),
-          darkColor: Color.fromARGB(255, 237, 223, 206),
-        ),
+        scaffoldBackgroundColor: commonBG,
           textTheme: CupertinoTextThemeData(
               textStyle: TextStyle(
                 fontFamily: GoogleFonts.nunito().fontFamily,
@@ -63,10 +60,7 @@ class _MainState extends State<Main> {
     return Stack(children: <Widget>[
       CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
-            backgroundColor: CupertinoDynamicColor.withBrightness(
-              color: Color.fromARGB(255, 237, 223, 206),
-              darkColor: Color.fromARGB(255, 237, 223, 206),
-            ),
+            backgroundColor: commonBG,
             currentIndex: _currentIndex,
             onTap: onTabTapped,
             items: [
@@ -87,10 +81,7 @@ class _MainState extends State<Main> {
                   child: CupertinoApp(
                     debugShowCheckedModeBanner: false,
                     theme: CupertinoThemeData(
-                      scaffoldBackgroundColor: CupertinoDynamicColor.withBrightness(
-                        color: Color.fromARGB(255, 237, 223, 206),
-                        darkColor: Color.fromARGB(255, 237, 223, 206),
-                      ),
+                      scaffoldBackgroundColor: commonBG,
                         textTheme: CupertinoTextThemeData(
                             textStyle: TextStyle(
                                 fontSize: FONTSIZE,

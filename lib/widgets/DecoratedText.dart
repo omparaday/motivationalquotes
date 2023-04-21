@@ -46,7 +46,7 @@ class DecoratedTextState extends State<DecoratedText> {
           child: Container(
               child: Container(
                   margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  color: QuoteHelper.isFavoriteQuote(_name) ? Color.fromARGB(125, 247, 195, 104)
+                  color: QuoteHelper.isFavoriteQuote(_name) ? Color.fromARGB(125, 247, 239, 138)
                       : Color.fromARGB(125, 184, 204, 245),
                   child: Container(
                       padding: const EdgeInsets.all(5.0),
