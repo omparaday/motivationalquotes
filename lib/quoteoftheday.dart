@@ -93,6 +93,11 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
+    print('in build');
+    for (Widget widget in _favoriteQuoteWidgets) {
+      DecoratedText dt = widget as DecoratedText;
+      print(dt.text);
+    }
 
     return Container(
         margin: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -184,6 +189,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
                   ),
                   Container(
                       child: Column(
+                        key: UniqueKey(),
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: _favoriteQuoteWidgets,
                       ))
@@ -204,11 +210,12 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
     _favoriteQuoteList = await quote.QuoteHelper.getFavoriteQuotes();
     _favoriteQuoteWidgets = <Widget>[];
     print(_favoriteQuoteList.length);
+    _favoriteQuoteWidgets.clear();
+    for(quote.Quote q in _favoriteQuoteList.reversed) {
+      print(q.name + " " + q.author + " " + q.content);
+      _favoriteQuoteWidgets.add(new DecoratedText(q.name, q.content, q.author, showSharePopup));
+    }
     setState(() {
-      for(quote.Quote q in _favoriteQuoteList.reversed) {
-        print(q.name + " " + q.author);
-        _favoriteQuoteWidgets.add(new DecoratedText(q.name, q.content, q.author, showSharePopup));
-      }
       _isFavoriteQuote = isFavoriteQuote(_quote?.name?? '');
     });
   }
