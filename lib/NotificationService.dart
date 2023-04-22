@@ -37,7 +37,6 @@ class NotificationService {
 
   void onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) {
-    print('id $id');
   }
 
   Future<void> showLocalNotification({

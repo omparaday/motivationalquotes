@@ -18,11 +18,14 @@ import 'dart:math' as math;
 import 'main.dart';
 
 const int ID_DAILY_NOTIFICATION = 1;
+
 class QuoteOfTheDay extends StatefulWidget {
   @override
   State<QuoteOfTheDay> createState() => _QuoteOfTheDayState();
 }
-class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserver {
+
+class _QuoteOfTheDayState extends State<QuoteOfTheDay>
+    with WidgetsBindingObserver {
   late quote.Quote? _quote;
   bool _isFavoriteQuote = false;
   late List<Widget> _favoriteQuoteWidgets;
@@ -53,10 +56,10 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
         }
         DateTime nextTimeToNotify = DateTime.now().add(Duration(minutes: 5));
         //nextTimeToNotify = new DateTime(nextTimeToNotify.year, nextTimeToNotify.month, nextTimeToNotify.day, 20, 30);
-        int secondsToNotify = nextTimeToNotify.difference(DateTime.now()).inSeconds;
+        int secondsToNotify =
+            nextTimeToNotify.difference(DateTime.now()).inSeconds;
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
         fetchFavoriteQuotes();
-        print('fetching favorite quotes');
         break;
       case AppLifecycleState.inactive:
         break;
@@ -70,11 +73,9 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   @override
   void initState() {
     super.initState();
-    quote.QuoteHelper.registerFavoriteUpdateCallback(
-            () {
-              print('inside callback');
-              fetchFavoriteQuotes();
-            });
+    quote.QuoteHelper.registerFavoriteUpdateCallback(() {
+      fetchFavoriteQuotes();
+    });
     _dateKey = dailydata.getDateKeyFormat(DateTime.now());
     WidgetsBinding.instance.addObserver(this);
     Timer.periodic(Duration(hours: 1), (timer) async {
@@ -93,12 +94,6 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
 
   @override
   Widget build(BuildContext context) {
-    print('in build');
-    for (Widget widget in _favoriteQuoteWidgets) {
-      DecoratedText dt = widget as DecoratedText;
-      print(dt.text);
-    }
-
     return Container(
         margin: EdgeInsets.only(left: 10.0, right: 10.0),
         child: SingleChildScrollView(
@@ -113,87 +108,79 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
                     L10n.of(context).resource('quoteoftheday'),
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                  _quote != null ? GestureDetector(
-                      onHorizontalDragEnd: (DragEndDetails details) {
-                        print(details.primaryVelocity);
-                        print('pps' + details.velocity.pixelsPerSecond.toString());
-                        if (details.velocity.pixelsPerSecond.dx.abs() > details.velocity.pixelsPerSecond.dy.abs()) {
-                          if (details.primaryVelocity! > 0) {
-                            // User swiped Left
-                            print('left');
-                          } else if (details.primaryVelocity! < 0) {
-                            // User swiped Right
-                            print('right');
-                          }
-                        }
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(5.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                          RepaintBoundary(
-                              key: globalKey,
-                              child: Container(
-                                width: math.min(300, MediaQuery.of(context).size.width),
-                                color: Color.fromARGB(255, 250, 224, 190),
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: <Widget>[
-                                    Row(children: <Widget>[
-                                      Image.asset(
-                                        'assets/goodnessOldPaper.png',
-                                        width: 15,
-                                        height: 15,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        'goodness.day',
-                                        style: TextStyle(
-                                            fontFamily: GoogleFonts.caveat().fontFamily,
-                                            color: CupertinoColors.black,
-                                            fontSize: VERYSMALL_FONTSIZE),
-                                      )
-                                    ]),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(_quote?.content ?? "",
-                                        style: TextStyle(
-                                            fontFamily: GoogleFonts.caveat().fontFamily,
-                                            color: CupertinoColors.black,
-                                            fontSize: LARGE_FONTSIZE))
-                                  ],
-                                ),
-                              )),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                CupertinoButton(
-                                  onPressed: null,
-                                  child: Icon(CupertinoIcons.share),
-                                ),
-                                CupertinoButton(
-                                  onPressed: toggleFavoriteQuote,
-                                  child: _isFavoriteQuote ? Icon(CupertinoIcons.heart_fill) : Icon(CupertinoIcons.heart),
-                                )
-                              ]),
-                        ]),
-                      )) : SizedBox.shrink(),
+                  _quote != null
+                      ? GestureDetector(
+                          onHorizontalDragEnd: (DragEndDetails details) {
+                            if (details.velocity.pixelsPerSecond.dx.abs() >
+                                details.velocity.pixelsPerSecond.dy.abs()) {
+                              if (details.primaryVelocity! > 0) {
+                                // User swiped Left
+                              } else if (details.primaryVelocity! < 0) {
+                                // User swiped Right
+                              }
+                            }
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0)),
+                            ),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  RepaintBoundary(
+                                      key: globalKey,
+                                      child: Container(
+                                        width: math.min(300,
+                                            MediaQuery.of(context).size.width),
+                                        color:
+                                            Color.fromARGB(255, 250, 224, 190),
+                                        padding: EdgeInsets.all(10),
+                                        child: Column(
+                                          children: <Widget>[
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Text(_quote?.content ?? "",
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                        GoogleFonts.caveat()
+                                                            .fontFamily,
+                                                    color:
+                                                        CupertinoColors.black,
+                                                    fontSize: LARGE_FONTSIZE))
+                                          ],
+                                        ),
+                                      )),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        CupertinoButton(
+                                          onPressed: null,
+                                          child: Icon(CupertinoIcons.share),
+                                        ),
+                                        CupertinoButton(
+                                          onPressed: toggleFavoriteQuote,
+                                          child: _isFavoriteQuote
+                                              ? Icon(CupertinoIcons.heart_fill)
+                                              : Icon(CupertinoIcons.heart),
+                                        )
+                                      ]),
+                                ]),
+                          ))
+                      : SizedBox.shrink(),
                   Text(
                     L10n.of(context).resource('favorites'),
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   Container(
                       child: Column(
-                        key: UniqueKey(),
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: _favoriteQuoteWidgets,
-                      ))
-
+                    key: UniqueKey(),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: _favoriteQuoteWidgets,
+                  ))
                 ],
               ),
             ),
@@ -209,14 +196,13 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   Future<void> fetchFavoriteQuotes() async {
     _favoriteQuoteList = await quote.QuoteHelper.getFavoriteQuotes();
     _favoriteQuoteWidgets = <Widget>[];
-    print(_favoriteQuoteList.length);
     _favoriteQuoteWidgets.clear();
-    for(quote.Quote q in _favoriteQuoteList.reversed) {
-      print(q.name + " " + q.author + " " + q.content);
-      _favoriteQuoteWidgets.add(new DecoratedText(q.name, q.content, q.author, showSharePopup));
+    for (quote.Quote q in _favoriteQuoteList.reversed) {
+      _favoriteQuoteWidgets
+          .add(new DecoratedText(q.name, q.content, q.author, showSharePopup));
     }
     setState(() {
-      _isFavoriteQuote = isFavoriteQuote(_quote?.name?? '');
+      _isFavoriteQuote = isFavoriteQuote(_quote?.name ?? '');
     });
   }
 
@@ -231,7 +217,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay> with WidgetsBindingObserv
   startFlow() async {
     quote.Quote q = await quote.QuoteHelper.getNewQuote();
     setState(() {
-    _quote = q;});
+      _quote = q;
+    });
   }
-
 }

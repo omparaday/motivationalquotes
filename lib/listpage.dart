@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +5,7 @@ import 'package:motivational_quotes/dbhelpers/DailyData.dart';
 import 'package:motivational_quotes/dbhelpers/QuoteHelper.dart';
 import 'package:motivational_quotes/widgets/DecoratedText.dart';
 import 'package:motivational_quotes/widgets/ImageShare.dart';
-import 'package:motivational_quotes/widgets/RounderSegmentControl.dart';
 import 'package:share_plus/share_plus.dart';
-
-import 'l10n/Localizations.dart';
 
 class AllQuotesPage extends StatefulWidget {
   @override
@@ -18,7 +13,7 @@ class AllQuotesPage extends StatefulWidget {
 }
 
 class _AllQuotesPageState extends State<AllQuotesPage> {
-  late List<Widget> recentData;
+  late List<Widget> allQuotesWidgetList;
 
   void dataChangeCallback() {
     fetchAllQuotes();
@@ -27,7 +22,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   @override
   void initState() {
     super.initState();
-    recentData = [];
+    allQuotesWidgetList = [];
     registerWriteCallback(dataChangeCallback);
     fetchAllQuotes();
   }
@@ -44,7 +39,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
               Container(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: recentData,
+                children: allQuotesWidgetList,
               ))
             ],
           ),
@@ -55,12 +50,12 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
 
   Future<void> fetchAllQuotes() async {
     Map<String, dynamic> quoteList = await QuoteHelper.getAllQuotes();
-    recentData.clear();
+    allQuotesWidgetList.clear();
     quoteList?.forEach((key, value) {
-      recentData.add(DecoratedText(key, value[value.keys.elementAt(0)], value.keys.elementAt(0), showSharePopup));
+      allQuotesWidgetList.add(DecoratedText(key, value[value.keys.elementAt(0)], value.keys.elementAt(0), showSharePopup));
     });
     setState(() {
-      recentData = recentData;
+      allQuotesWidgetList = allQuotesWidgetList;
     });
   }
 

@@ -14,7 +14,7 @@ const double SMALL_FONTSIZE = 16;
 const double FONTSIZE = 18;
 const double MEDIUM_FONTSIZE = 20;
 const double LARGE_FONTSIZE = 28;
-const Color commonBG = Color.fromARGB(189, 242, 225, 242);
+const Color commonBG = Color.fromARGB(255, 250, 224, 190);
 void main() {
   runApp(new CupertinoApp(
       debugShowCheckedModeBanner: false,
