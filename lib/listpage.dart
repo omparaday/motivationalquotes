@@ -7,6 +7,8 @@ import 'package:motivational_quotes/widgets/DecoratedText.dart';
 import 'package:motivational_quotes/widgets/ImageShare.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'l10n/Localizations.dart';
+
 class AllQuotesPage extends StatefulWidget {
   @override
   State<AllQuotesPage> createState() => _AllQuotesPageState();
@@ -14,6 +16,7 @@ class AllQuotesPage extends StatefulWidget {
 
 class _AllQuotesPageState extends State<AllQuotesPage> {
   late List<Widget> allQuotesWidgetList;
+  late Map<String, dynamic> allQuotesList;
 
   void dataChangeCallback() {
     fetchAllQuotes();
@@ -23,8 +26,37 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   void initState() {
     super.initState();
     allQuotesWidgetList = [];
+    allQuotesList = {};
     registerWriteCallback(dataChangeCallback);
     fetchAllQuotes();
+  }
+
+  void filterQuotes(String text) {
+    allQuotesWidgetList.clear();
+    if (text.isEmpty) {
+      addAllQuoteWidgets();
+    } else {
+      allQuotesList?.forEach((key, value) {
+        if (value.keys
+                .elementAt(0)
+                .toString()
+                .toLowerCase()
+                .contains(text.toLowerCase()) ||
+            value[value.keys.elementAt(0)]
+                .toString()
+                .toLowerCase()
+                .contains((text.toLowerCase()))) {
+          allQuotesWidgetList.add(DecoratedText(
+              key,
+              value[value.keys.elementAt(0)],
+              value.keys.elementAt(0),
+              showSharePopup));
+        }
+      });
+      setState(() {
+        allQuotesWidgetList = allQuotesWidgetList;
+      });
+    }
   }
 
   @override
@@ -35,9 +67,13 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
         child: SafeArea(
           child: Column(
             children: <Widget>[
-              Icon(CupertinoIcons.doc_text_search),
+              CupertinoSearchTextField(
+                placeholder: L10n.of(context).resource('searchHelp'),
+                onChanged: (value) => filterQuotes(value),
+              ),
               Container(
                   child: Column(
+                key: UniqueKey(),
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: allQuotesWidgetList,
               ))
@@ -49,10 +85,15 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   }
 
   Future<void> fetchAllQuotes() async {
-    Map<String, dynamic> quoteList = await QuoteHelper.getAllQuotes();
+    allQuotesList = await QuoteHelper.getAllQuotes();
+    addAllQuoteWidgets();
+  }
+
+  void addAllQuoteWidgets() {
     allQuotesWidgetList.clear();
-    quoteList?.forEach((key, value) {
-      allQuotesWidgetList.add(DecoratedText(key, value[value.keys.elementAt(0)], value.keys.elementAt(0), showSharePopup));
+    allQuotesList?.forEach((key, value) {
+      allQuotesWidgetList.add(DecoratedText(key, value[value.keys.elementAt(0)],
+          value.keys.elementAt(0), showSharePopup));
     });
     setState(() {
       allQuotesWidgetList = allQuotesWidgetList;

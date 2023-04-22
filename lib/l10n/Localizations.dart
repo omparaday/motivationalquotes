@@ -14,6 +14,7 @@ class L10n {
 
   static const _localizedValues = <String, Map<String, String>>{
     'en': {
+      'searchHelp': 'Search keyword or author name',
       'quoteoftheday': 'Today\'s Quote',
       'favorites': 'Favorites',
       'list': 'All Quotes',
