@@ -39,14 +39,14 @@ class DecoratedTextState extends State<DecoratedText> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: QuoteHelper.isFavoriteQuote(_name)
-              ? Color.fromARGB(50, 0, 153, 0)
+              ? Color.fromARGB(40, 0, 153, 0)
               : Color.fromARGB(125, 184, 204, 245),
         ),
         margin: const EdgeInsets.only(top: 5.0, bottom: 5.0),
         child: Slidable(
           child: GestureDetector(
               onTap: () {
-                _onTap(_name, _text);
+                _onTap(_name, _text, _author);
                 setState(() {
                   showOverflow = false;
                 });

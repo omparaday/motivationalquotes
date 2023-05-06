@@ -34,14 +34,14 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
   late String _dateKey;
   GlobalKey globalKey = GlobalKey();
 
-  void showSharePopup(String name, String content) {
+  void showSharePopup(String name, String content, String author) {
     if (!kIsWeb) {
       showCupertinoModalPopup<void>(
           context: context,
           builder: (BuildContext context) => Dialog(
               backgroundColor:
                   CupertinoTheme.of(context).scaffoldBackgroundColor,
-              child: ImageShare(name, content ?? '')));
+              child: ImageShare(name, content ?? '', author)));
     } else {
       Share.share(content ?? '');
     }
@@ -135,7 +135,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                                         width: math.min(300,
                                             MediaQuery.of(context).size.width),
                                         color:
-                                            Color.fromARGB(255, 250, 224, 190),
+                                            commonBG,
                                         padding: EdgeInsets.all(10),
                                         child: Column(
                                           children: <Widget>[
@@ -149,7 +149,14 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                                                             .fontFamily,
                                                     color:
                                                         CupertinoColors.black,
-                                                    fontSize: LARGE_FONTSIZE))
+                                                    fontSize: LARGE_FONTSIZE)),
+                                            Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: <Widget>[Text(_quote?.author ?? '',
+                                                    style: TextStyle(
+                                                        fontFamily: GoogleFonts.caveat().fontFamily,
+                                                        color: CupertinoColors.black,
+                                                        fontSize: MEDIUM_FONTSIZE))])
                                           ],
                                         ),
                                       )),
@@ -158,7 +165,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                                           MainAxisAlignment.center,
                                       children: <Widget>[
                                         CupertinoButton(
-                                          onPressed: null,
+                                          onPressed: () => {showSharePopup(_quote?.name ?? '', _quote?.content ?? '', _quote?.author?? '')},
                                           child: Icon(CupertinoIcons.share),
                                         ),
                                         CupertinoButton(

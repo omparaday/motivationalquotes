@@ -28,6 +28,9 @@ class L10n {
       'fuller': 'Margaret Fuller',
       'barnett': 'IDA B. WELLS-BARNETT',
       'whitman': 'Walt Whitman',
+      'settings': 'Settings',
+      'notifications': 'Notifications',
+      'hello': 'Hello'
     }
   };
 

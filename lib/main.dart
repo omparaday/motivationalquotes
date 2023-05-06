@@ -4,6 +4,7 @@ import 'package:motivational_quotes/quoteoftheday.dart';
 import 'package:motivational_quotes/l10n/Localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:motivational_quotes/settingspage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,7 +15,7 @@ const double SMALL_FONTSIZE = 16;
 const double FONTSIZE = 18;
 const double MEDIUM_FONTSIZE = 20;
 const double LARGE_FONTSIZE = 28;
-const Color commonBG = Color.fromARGB(255, 250, 224, 190);
+const Color commonBG = Color.fromARGB(255, 250, 240, 230);
 void main() {
   runApp(new CupertinoApp(
       debugShowCheckedModeBanner: false,
@@ -72,6 +73,10 @@ class _MainState extends State<Main> {
                 icon: Icon(CupertinoIcons.list_bullet),
                 label: L10n.of(context).resource('list'),
               ),
+              BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.settings),
+                label: L10n.of(context).resource('settings'),
+              ),
             ],
           ),
           tabBuilder: (BuildContext context, int index) {
@@ -103,6 +108,7 @@ class _MainState extends State<Main> {
                         children: [
                           QuoteOfTheDay(),
                           AllQuotesPage(),
+                          SettingsPage(),
                         ],
                       ),
                     ),

@@ -100,14 +100,14 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
     });
   }
 
-  void showSharePopup(String name, String quote) {
+  void showSharePopup(String name, String quote, String author) {
     if (!kIsWeb) {
       showCupertinoModalPopup<void>(
           context: context,
           builder: (BuildContext context) => Dialog(
               backgroundColor:
                   CupertinoTheme.of(context).scaffoldBackgroundColor,
-              child: ImageShare(name, quote)));
+              child: ImageShare(name, quote, author)));
     } else {
       Share.share(quote);
     }
