@@ -42,6 +42,13 @@ class QuoteHelper {
             .elementAt(0));
   }
 
+  static Future<Quote> getQuoteForKey(String quoteName) async {
+    String data = await rootBundle.loadString("assets/quotes.json");
+
+    Map<String, dynamic> allQuoteFileContent = Map<String,dynamic>.from(jsonDecode(data));
+    return Quote(quoteName, allQuoteFileContent[quoteName][allQuoteFileContent[quoteName].keys.elementAt(0)], allQuoteFileContent[quoteName].keys.elementAt(0));
+  }
+
   static Future<Map<String, dynamic>> getAllQuotes() async {
     await fetchAllQuotes();
     return allQuoteFileContent;

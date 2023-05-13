@@ -1,9 +1,12 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+
+import 'l10n/Localizations.dart';
 
 class NotificationService {
   NotificationService();
@@ -44,8 +47,9 @@ class NotificationService {
     required String title,
     required String body,
     required String payload,
+    required BuildContext context
   }) async {
-    final platformChannelSpecifics = await _notificationDetails();
+    final platformChannelSpecifics = await _notificationDetails(context);
     await _localNotifications.show(
       id,
       title,
@@ -55,10 +59,10 @@ class NotificationService {
     );
   }
 
-  Future<NotificationDetails> _notificationDetails() async {
+  Future<NotificationDetails> _notificationDetails(BuildContext context) async {
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'GoodnessDay',
+          L10n.of(context).resource('quoteoftheday'),
       'Goodness Day Notification',
       groupKey: 'com.monsoon.goodness',
       channelDescription: 'Record your mood today for a better tomorrow.',
@@ -87,8 +91,9 @@ class NotificationService {
     required String body,
     required String payload,
     required int seconds,
+    required BuildContext context
   }) async {
-    final platformChannelSpecifics = await _notificationDetails();
+    final platformChannelSpecifics = await _notificationDetails(context);
     await _localNotifications.zonedSchedule(
       id,
       title,
