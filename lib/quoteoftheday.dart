@@ -17,6 +17,7 @@ import 'l10n/Localizations.dart';
 import 'dart:math' as math;
 
 import 'main.dart';
+import 'notificationsettings.dart';
 
 const int ID_DAILY_NOTIFICATION = 1;
 
@@ -58,12 +59,19 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
           _dateKey = dailydata.getDateKeyFormat(DateTime.now());
         }
         DateTime nextTimeToNotify = DateTime.now().add(Duration(minutes: 5));
-        //nextTimeToNotify = new DateTime(nextTimeToNotify.year, nextTimeToNotify.month, nextTimeToNotify.day, 20, 30);
-        int secondsToNotify =
-            nextTimeToNotify.difference(DateTime.now()).inSeconds;
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
         fetchFavoriteQuotes();
-        _initPrefs();
+        initTodaysQuote();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        if (await prefs.getBool('isNotificationsEnabled')?? DEFAULT_NOTIFICATION_ENABLED) {
+          await notificationService.showScheduledLocalNotification(
+              id: ID_DAILY_NOTIFICATION,
+              title: L10n.of(context).resource(
+                  'dailyReminderNotificationTitle'),
+              body: L10n.of(context).resource('dailyReminderNotificationBody'),
+              payload: L10n.of(context).resource(
+                  'dailyReminderNotificationPayload'));
+        }
         break;
       case AppLifecycleState.inactive:
         break;
@@ -84,43 +92,10 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
     WidgetsBinding.instance.addObserver(this);
     _quote = null;
     _favoriteQuoteWidgets = <Widget>[];
-    _initPrefs();
+    initTodaysQuote();
     fetchFavoriteQuotes();
     notificationService = NotificationService();
     notificationService.initializePlatformNotifications();
-  }
-
-  Future<void> _initPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
-    _lastFetchTime = DateTime.fromMillisecondsSinceEpoch(
-      _prefs.getInt('last_fetch_time') ?? 0,
-    );
-    _fetchDataIfNeeded();
-  }
-
-  _fetchDataIfNeeded() async {
-    final now = DateTime.now();
-    if (_lastFetchTime.year != now.year ||
-        _lastFetchTime.month != now.month ||
-        _lastFetchTime.day != now.day ||
-        _prefs.getString('todays_quote') == null) {
-      await fetchData();
-    } else {
-      quote.Quote q = await quote.QuoteHelper.getQuoteForKey(_prefs.getString('todays_quote')?? '');
-      setState(() {
-        _quote = q;
-      });
-    }
-  }
-
-  fetchData() async {
-    _lastFetchTime = DateTime.now();
-    await _prefs.setInt('last_fetch_time', _lastFetchTime.millisecondsSinceEpoch);
-    quote.Quote q = await quote.QuoteHelper.getNewQuote();
-    setState(() {
-      _quote = q;
-    });
-    await _prefs.setString('todays_quote', q.name);
   }
 
   @override
@@ -250,5 +225,12 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
       result = result || q.name == name;
     }
     return result;
+  }
+
+  Future<void> initTodaysQuote() async {
+    quote.Quote? q = await quote.QuoteHelper.fetchDataIfNeeded();
+    setState(() {
+      _quote = q;
+    });
   }
 }

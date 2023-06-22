@@ -30,7 +30,10 @@ class L10n {
       'whitman': 'Walt Whitman',
       'settings': 'Settings',
       'notifications': 'Notifications',
-      'hello': 'Hello'
+      'hello': 'Hello',
+      'dailyReminderNotificationTitle': 'Motivational Quotes',
+      'dailyReminderNotificationBody': 'Check your today\'s Motivational Quote',
+      'dailyReminderNotificationPayload': ''
     }
   };
 

@@ -13,6 +13,8 @@ class Quote {
 const QUOTE_START_KEY = 'QUOTE_START';
 const QUOTES_FILE_PATH = "assets/quotes.json";
 class QuoteHelper {
+  static late SharedPreferences _prefs;
+  static late DateTime _lastFetchTime;
   static List<Function> callbacks = [];
   static List<Quote> favoriteQuoteList = [];
   static Map<String, dynamic> allQuoteFileContent = {};
@@ -118,5 +120,29 @@ class QuoteHelper {
     for (Function callback in callbacks) {
       callback();
     }
+  }
+
+  static Future<Quote?> fetchDataIfNeeded() async {
+    _prefs = await SharedPreferences.getInstance();
+    _lastFetchTime = DateTime.fromMillisecondsSinceEpoch(
+      _prefs.getInt('last_fetch_time') ?? 0,
+    );
+    final now = DateTime.now();
+    if (_lastFetchTime.year != now.year ||
+        _lastFetchTime.month != now.month ||
+        _lastFetchTime.day != now.day ||
+        _prefs.getString('todays_quote') == null) {
+      return await fetchData();
+    } else {
+      return await getQuoteForKey(_prefs.getString('todays_quote')?? '');
+    }
+  }
+
+  static Future<Quote> fetchData() async {
+    _lastFetchTime = DateTime.now();
+    await _prefs.setInt('last_fetch_time', _lastFetchTime.millisecondsSinceEpoch);
+    Quote q = await getNewQuote();
+    await _prefs.setString('todays_quote', q.name);
+    return q;
   }
 }

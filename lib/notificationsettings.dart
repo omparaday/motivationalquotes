@@ -7,8 +7,10 @@ class NotificationSettings extends StatefulWidget {
   _NotificationSettingsState createState() => _NotificationSettingsState();
 }
 
+const bool DEFAULT_NOTIFICATION_ENABLED = true;
+
 class _NotificationSettingsState extends State<NotificationSettings> {
-  bool _isNotificationsEnabled = false;
+  bool _isNotificationsEnabled = DEFAULT_NOTIFICATION_ENABLED;
 
   @override
   void initState() {
@@ -18,7 +20,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
 
   void _loadNotificationSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isNotificationsEnabled = prefs.getBool('isNotificationsEnabled') ?? false;
+    bool isNotificationsEnabled = prefs.getBool('isNotificationsEnabled') ?? DEFAULT_NOTIFICATION_ENABLED;
     setState(() {
       _isNotificationsEnabled = isNotificationsEnabled;
     });

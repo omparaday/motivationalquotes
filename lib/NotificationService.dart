@@ -6,8 +6,6 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
-import 'l10n/Localizations.dart';
-
 class NotificationService {
   NotificationService();
 
@@ -49,7 +47,7 @@ class NotificationService {
     required String payload,
     required BuildContext context
   }) async {
-    final platformChannelSpecifics = await _notificationDetails(context);
+    final platformChannelSpecifics = await _notificationDetails();
     await _localNotifications.show(
       id,
       title,
@@ -59,15 +57,12 @@ class NotificationService {
     );
   }
 
-  Future<NotificationDetails> _notificationDetails(BuildContext context) async {
+  Future<NotificationDetails> _notificationDetails() async {
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-          L10n.of(context).resource('quoteoftheday'),
-      'Goodness Day Notification',
-      groupKey: 'com.monsoon.goodness',
-      channelDescription: 'Record your mood today for a better tomorrow.',
-      importance: Importance.max,
-      priority: Priority.max,
+          'Quote of the Day',
+      'Motivational Quotes',
+      groupKey: 'com.monsoon.motivational_quotes',
       playSound: true,
       ticker: 'ticker',
       largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
@@ -89,21 +84,19 @@ class NotificationService {
     required int id,
     required String title,
     required String body,
-    required String payload,
-    required int seconds,
-    required BuildContext context
+    required String payload
   }) async {
-    final platformChannelSpecifics = await _notificationDetails(context);
+    final platformChannelSpecifics = await _notificationDetails();
     await _localNotifications.zonedSchedule(
       id,
       title,
       body,
-      tz.TZDateTime.now(tz.local).add(Duration(seconds: seconds)),
+      tz.TZDateTime.now(tz.local).add(Duration(seconds: (3600*24))),
       platformChannelSpecifics,
       payload: payload,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,
+      androidAllowWhileIdle: false,
     );
   }
 
