@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:motivational_quotes/main.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,6 +13,11 @@ import 'dart:math' as math;
 import '../l10n/Localizations.dart';
 import 'ColorPickerWidget.dart';
 import 'RounderSegmentControl.dart';
+
+const String KEY_SHARE_FONT = 'shareFont';
+const String KEY_USE_IMAGE_BG = 'shareUseImgBg';
+const String KEY_BG_COLOR = 'shareBgColor';
+const String KEY_BG_IMAGE = 'shareBgImage';
 
 class ImageShare extends StatefulWidget {
   final String name, text, author;
@@ -72,21 +76,21 @@ class ImageShareState extends State<ImageShare> {
   ];
 
   changeColor(Color selectedColor) async {
-    sharedPrefs.setInt('bgColor', selectedColor.value);
+    sharedPrefs.setInt(KEY_BG_COLOR, selectedColor.value);
     setState(() {
       bgColor = selectedColor;
     });
   }
 
   changeImage(String selectedImage) async {
-    sharedPrefs.setString('bgImage', selectedImage);
+    sharedPrefs.setString(KEY_BG_IMAGE, selectedImage);
     setState(() {
       bgImage = selectedImage;
     });
   }
 
   changeFont(String selectedFont) async {
-    sharedPrefs.setString('shareFont', selectedFont);
+    sharedPrefs.setString(KEY_SHARE_FONT, selectedFont);
     setState(() {
       font = selectedFont;
     });
@@ -187,7 +191,7 @@ class ImageShareState extends State<ImageShare> {
           onValueChanged: (bool value) {
             setState(() {
               useImgBg = value;
-              sharedPrefs.setBool('useImgBg', useImgBg);
+              sharedPrefs.setBool(KEY_USE_IMAGE_BG, useImgBg);
             });
           },
           children: <bool, String>{
@@ -228,11 +232,11 @@ class ImageShareState extends State<ImageShare> {
   Future<void> updateLastSettings() async {
     sharedPrefs = await SharedPreferences.getInstance();
     Color usedColor =
-        Color(sharedPrefs.getInt('bgColor') ?? DEFAULT_BG_COLOR.value);
-    String usedImage = sharedPrefs.getString('bgImage') ?? DEFAULT_BG_IMAGE;
+        Color(sharedPrefs.getInt(KEY_BG_COLOR) ?? DEFAULT_BG_COLOR.value);
+    String usedImage = sharedPrefs.getString(KEY_BG_IMAGE) ?? DEFAULT_BG_IMAGE;
     String? usedFont =
-        sharedPrefs.getString('shareFont') ?? GoogleFonts.caveat().fontFamily;
-    bool prevusedImgBg = sharedPrefs.getBool('useImgBg') ?? DEFAULT_USE_IMG_BG;
+        sharedPrefs.getString(KEY_SHARE_FONT) ?? GoogleFonts.caveat().fontFamily;
+    bool prevusedImgBg = sharedPrefs.getBool(KEY_USE_IMAGE_BG) ?? DEFAULT_USE_IMG_BG;
     if (bgColor != usedColor ||
         bgImage != usedImage ||
         font != usedFont ||

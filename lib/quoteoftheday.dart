@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:motivational_quotes/dbhelpers/DailyData.dart' as dailydata;
+import 'package:motivational_quotes/settingspage.dart';
 import 'package:motivational_quotes/widgets/DecoratedText.dart';
 import 'package:motivational_quotes/widgets/ImageShare.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,7 +18,6 @@ import 'l10n/Localizations.dart';
 import 'dart:math' as math;
 
 import 'main.dart';
-import 'notificationsettings.dart';
 
 const int ID_DAILY_NOTIFICATION = 1;
 
