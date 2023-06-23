@@ -3,8 +3,9 @@ import 'package:flutter/cupertino.dart';
 class ColorPickerRow extends StatefulWidget {
   final List<Color> colorList;
   final Function(Color) onColorSelected;
+  final int initialIndex;
 
-  const ColorPickerRow({Key? key, required this.colorList, required this.onColorSelected})
+  const ColorPickerRow({Key? key, required this.colorList, required this.onColorSelected, required this.initialIndex})
       : super(key: key);
 
   @override
@@ -12,7 +13,23 @@ class ColorPickerRow extends StatefulWidget {
 }
 
 class _ColorPickerRowState extends State<ColorPickerRow> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _selectedIndex = widget.initialIndex;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant ColorPickerRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    setState(() {
+      _selectedIndex = widget.initialIndex;
+    });
+  }
 
   void _selectColor(int index) {
     setState(() {

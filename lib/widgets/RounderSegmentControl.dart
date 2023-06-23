@@ -21,6 +21,12 @@ class _RoundedSegmentControlState<T extends Object> extends State<RoundedSegment
   }
 
   @override
+  void didUpdateWidget(covariant RoundedSegmentControl<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    current = widget.groupValue;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Wrap(
       runSpacing: 7,
@@ -38,7 +44,7 @@ class _RoundedSegmentControlState<T extends Object> extends State<RoundedSegment
               padding: const EdgeInsets.only(left: 20, right: 20, top: 2, bottom: 2),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(18)),
-                color: elementAtIndex == current ? CupertinoColors.systemBlue : CupertinoColors.systemGrey2,
+                color: elementAtIndex == current ? CupertinoColors.activeOrange : CupertinoColors.systemGrey2,
               ),
               child: Text(widget.children[elementAtIndex] ?? '', style: TextStyle(color: CupertinoColors.white)),
             ),

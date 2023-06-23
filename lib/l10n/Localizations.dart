@@ -33,7 +33,9 @@ class L10n {
       'hello': 'Hello',
       'dailyReminderNotificationTitle': 'Motivational Quotes',
       'dailyReminderNotificationBody': 'Check your today\'s Motivational Quote',
-      'dailyReminderNotificationPayload': ''
+      'dailyReminderNotificationPayload': '',
+      'art': 'Art',
+      'color': 'Color'
     }
   };
 

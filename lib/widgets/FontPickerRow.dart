@@ -7,8 +7,9 @@ import '../l10n/Localizations.dart';
 class FontPickerRow extends StatefulWidget {
   final List<String?> fontList;
   final Function(String) onFontSelected;
+  final int initialIndex;
 
-  const FontPickerRow({Key? key, required this.fontList, required this.onFontSelected})
+  const FontPickerRow({Key? key, required this.fontList, required this.onFontSelected, required this.initialIndex})
       : super(key: key);
 
   @override
@@ -17,6 +18,22 @@ class FontPickerRow extends StatefulWidget {
 
 class _FontPickerRowState extends State<FontPickerRow> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _selectedIndex = widget.initialIndex;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant FontPickerRow oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    setState(() {
+      _selectedIndex = widget.initialIndex;
+    });
+  }
 
   void _selectColor(int index) {
     setState(() {
