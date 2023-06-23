@@ -140,8 +140,6 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                                       child: Container(
                                         width: math.min(300,
                                             MediaQuery.of(context).size.width),
-                                        color:
-                                            commonBG,
                                         padding: EdgeInsets.all(10),
                                         child: Column(
                                           children: <Widget>[

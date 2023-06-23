@@ -129,6 +129,7 @@ class ImageShareState extends State<ImageShare> {
       padding: EdgeInsets.all(5.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        color: commonBG
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         RepaintBoundary(

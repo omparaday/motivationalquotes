@@ -35,7 +35,8 @@ class L10n {
       'dailyReminderNotificationBody': 'Check your today\'s Motivational Quote',
       'dailyReminderNotificationPayload': '',
       'art': 'Art',
-      'color': 'Color'
+      'color': 'Color',
+      'theme': 'Theme'
     }
   };
 

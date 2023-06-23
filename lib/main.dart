@@ -18,7 +18,7 @@ void main() {
   runApp(new CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(
-        scaffoldBackgroundColor: commonBG,
+        scaffoldBackgroundColor: commonBG.withOpacity(0.0),
           textTheme: CupertinoTextThemeData(
               textStyle: TextStyle(
                 fontFamily: GoogleFonts.nunito().fontFamily,
@@ -43,23 +43,76 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
+  SharedPreferences? sharedPreferences;
   late int _currentIndex;
   bool _showWelcome = false, _showAppDownload = false;
   int _welcomeIndex = 1;
+  Color bgColor = DEFAULT_OVERALL_BG_COLOR;
+  String bgImage = DEFAULT_OVERALL_BG_IMAGE;
+  bool useImgBg = DEFAULT_OVERALL_USE_IMG_BG;
 
   @override
   void initState() {
     _currentIndex = 0;
     checkAndShowWelcomeScreen();
     super.initState();
+    initSharedPreferences();
+  }
+
+  Future<void> initSharedPreferences() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    Color usedColor =
+    Color(sp.getInt(KEY_OVERALL_BG_COLOR) ??
+        DEFAULT_OVERALL_BG_COLOR.value);
+    String usedImage = sp.getString(KEY_OVERALL_BG_IMAGE) ??
+        DEFAULT_OVERALL_BG_IMAGE;
+    bool prevusedImgBg = sp.getBool(KEY_OVERALL_USE_IMAGE_BG) ??
+        DEFAULT_OVERALL_USE_IMG_BG;
+    setState(() {
+      sharedPreferences = sp;
+      bgColor = usedColor;
+      bgImage = usedImage;
+      useImgBg = prevusedImgBg;
+    });
+  }
+
+  void onColorSelected(Color color) {
+    setState (() {
+      bgColor = color;
+    });
+  }
+
+  void onImageSelected(String image) {
+    setState (() {
+      bgImage = image;
+    });
+    print(bgImage);
+  }
+
+  void onUseImageChanged(bool value) {
+    setState (() {
+      useImgBg = value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
+      Positioned.fill(  //
+        child: Container(
+          color: CupertinoColors.white,
+        ),
+      ),
+      Positioned.fill(  //
+        child: Image(
+          image: AssetImage(bgImage),
+          opacity: const AlwaysStoppedAnimation(0.2),
+          fit : BoxFit.fill,
+        ),
+      ),
       CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
-            backgroundColor: commonBG,
+            backgroundColor: useImgBg ? bgColor.withOpacity(0.0) : bgColor,
             currentIndex: _currentIndex,
             onTap: onTabTapped,
             items: [
@@ -80,11 +133,10 @@ class _MainState extends State<Main> {
           tabBuilder: (BuildContext context, int index) {
             return CupertinoTabView(
               builder: (BuildContext context) {
-                return SafeArea(
-                  child: CupertinoApp(
+                return CupertinoApp(
                     debugShowCheckedModeBanner: false,
                     theme: CupertinoThemeData(
-                      scaffoldBackgroundColor: commonBG,
+                      scaffoldBackgroundColor: useImgBg ? bgColor.withOpacity(0.0) : bgColor,
                         textTheme: CupertinoTextThemeData(
                             textStyle: TextStyle(
                                 fontSize: FONTSIZE,
@@ -106,11 +158,10 @@ class _MainState extends State<Main> {
                         children: [
                           QuoteOfTheDay(),
                           AllQuotesPage(),
-                          SettingsPage(),
+                          SettingsPage(onColorSelected: onColorSelected, onImageSelected: onImageSelected, onUseImageChanged: onUseImageChanged,),
                         ],
                       ),
                     ),
-                  ),
                 );
               },
             );
