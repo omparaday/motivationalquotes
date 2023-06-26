@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:motivational_quotes/main.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:motivational_quotes/settingspage.dart';
 import 'package:motivational_quotes/widgets/BGImagePickerWidget.dart';
 import 'package:motivational_quotes/widgets/FontPickerRow.dart';
 import 'package:share_plus/share_plus.dart';
@@ -41,6 +42,7 @@ class ImageShareState extends State<ImageShare> {
   late Uint8List pngBytes;
   bool clicked = false;
   Color bgColor = DEFAULT_BG_COLOR;
+  Color overallBgColor = DEFAULT_OVERALL_BG_COLOR;
   String bgImage = DEFAULT_BG_IMAGE;
   bool useImgBg = DEFAULT_USE_IMG_BG;
   String? font = GoogleFonts.caveat().fontFamily;
@@ -128,9 +130,8 @@ class ImageShareState extends State<ImageShare> {
     return Container(
       padding: EdgeInsets.all(5.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-        color: commonBG
-      ),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          color: overallBgColor),
       child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
         RepaintBoundary(
             key: globalKey,
@@ -232,12 +233,15 @@ class ImageShareState extends State<ImageShare> {
 
   Future<void> updateLastSettings() async {
     sharedPrefs = await SharedPreferences.getInstance();
+    overallBgColor = Color(sharedPrefs.getInt(KEY_OVERALL_BG_COLOR) ??
+        DEFAULT_OVERALL_BG_COLOR.value);
     Color usedColor =
         Color(sharedPrefs.getInt(KEY_BG_COLOR) ?? DEFAULT_BG_COLOR.value);
     String usedImage = sharedPrefs.getString(KEY_BG_IMAGE) ?? DEFAULT_BG_IMAGE;
-    String? usedFont =
-        sharedPrefs.getString(KEY_SHARE_FONT) ?? GoogleFonts.caveat().fontFamily;
-    bool prevusedImgBg = sharedPrefs.getBool(KEY_USE_IMAGE_BG) ?? DEFAULT_USE_IMG_BG;
+    String? usedFont = sharedPrefs.getString(KEY_SHARE_FONT) ??
+        GoogleFonts.caveat().fontFamily;
+    bool prevusedImgBg =
+        sharedPrefs.getBool(KEY_USE_IMAGE_BG) ?? DEFAULT_USE_IMG_BG;
     if (bgColor != usedColor ||
         bgImage != usedImage ||
         font != usedFont ||

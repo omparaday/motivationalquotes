@@ -112,7 +112,7 @@ class _MainState extends State<Main> {
       ),
       CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
-            backgroundColor: useImgBg ? bgColor.withOpacity(0.0) : bgColor,
+            backgroundColor:bgColor.withOpacity(0.4),
             currentIndex: _currentIndex,
             onTap: onTabTapped,
             items: [

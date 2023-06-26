@@ -16,7 +16,8 @@ class AllQuotesPage extends StatefulWidget {
 
 class _AllQuotesPageState extends State<AllQuotesPage> {
   late List<Widget> allQuotesWidgetList;
-  late Map<String, dynamic> allQuotesList;
+  late Map<String, dynamic> filteredQuotesList;
+  late Map<String, dynamic> originalQuotesList;
 
   void dataChangeCallback() {
     fetchAllQuotes();
@@ -26,37 +27,31 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   void initState() {
     super.initState();
     allQuotesWidgetList = [];
-    allQuotesList = {};
+    filteredQuotesList = {};
+    originalQuotesList = {};
     registerWriteCallback(dataChangeCallback);
     fetchAllQuotes();
   }
 
   void filterQuotes(String text) {
     allQuotesWidgetList.clear();
+    filteredQuotesList.clear();
     if (text.isEmpty) {
       addAllQuoteWidgets();
     } else {
-      allQuotesList?.forEach((key, value) {
-        if (value.keys
-                .elementAt(0)
-                .toString()
-                .toLowerCase()
-                .contains(text.toLowerCase()) ||
-            value[value.keys.elementAt(0)]
-                .toString()
-                .toLowerCase()
-                .contains((text.toLowerCase()))) {
-          allQuotesWidgetList.add(DecoratedText(
-              key,
-              value[value.keys.elementAt(0)],
-              value.keys.elementAt(0),
-              showSharePopup));
+      filteredQuotesList.clear();
+      originalQuotesList.forEach((key, value) {
+        String quote = value[value.keys.elementAt(0)].toString().toLowerCase();
+        String author = value.keys.elementAt(0).toString().toLowerCase();
+        if (quote.contains(text.toLowerCase()) ||
+            author.contains(text.toLowerCase())) {
+          filteredQuotesList.putIfAbsent(key, () {
+            return value;
+          });
         }
       });
-      setState(() {
-        allQuotesWidgetList = allQuotesWidgetList;
-      });
     }
+    setState(() {});
   }
 
   @override
@@ -71,12 +66,22 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
                 placeholder: L10n.of(context).resource('searchHelp'),
                 onChanged: (value) => filterQuotes(value),
               ),
-              Container(
-                  child: Column(
-                key: UniqueKey(),
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: allQuotesWidgetList,
-              ))
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: filteredQuotesList.length,
+                itemBuilder: (context, index) {
+                  String name = filteredQuotesList.keys.elementAt(index);
+                  dynamic value = filteredQuotesList[name];
+                  return DecoratedText(
+                    name,
+                    value[value.keys.elementAt(0)].toString(),
+                    value.keys.elementAt(0), showSharePopup,
+                    key: ValueKey<String>(name), // Assigning a unique key
+                  );
+                },
+                addAutomaticKeepAlives: true,
+              ),
             ],
           ),
         ),
@@ -85,19 +90,17 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   }
 
   Future<void> fetchAllQuotes() async {
-    allQuotesList = await QuoteHelper.getAllQuotes();
+    if (filteredQuotesList.isEmpty) {
+      filteredQuotesList = await QuoteHelper.getAllQuotes();
+      originalQuotesList.addAll(filteredQuotesList);
+    }
     addAllQuoteWidgets();
   }
 
   void addAllQuoteWidgets() {
-    allQuotesWidgetList.clear();
-    allQuotesList?.forEach((key, value) {
-      allQuotesWidgetList.add(DecoratedText(key, value[value.keys.elementAt(0)],
-          value.keys.elementAt(0), showSharePopup));
-    });
-    setState(() {
-      allQuotesWidgetList = allQuotesWidgetList;
-    });
+    filteredQuotesList.clear();
+    filteredQuotesList.addAll(originalQuotesList);
+    setState(() {});
   }
 
   void showSharePopup(String name, String quote, String author) {
