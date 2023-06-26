@@ -60,8 +60,8 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
         }
         DateTime nextTimeToNotify = DateTime.now().add(Duration(minutes: 5));
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
-        fetchFavoriteQuotes();
         initTodaysQuote();
+        fetchFavoriteQuotes();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         if (await prefs.getBool('isNotificationsEnabled')?? DEFAULT_NOTIFICATION_ENABLED) {
           await notificationService.showScheduledLocalNotification(
