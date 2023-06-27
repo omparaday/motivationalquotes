@@ -4,8 +4,9 @@ class ColorPickerRow extends StatefulWidget {
   final List<Color> colorList;
   final Function(Color) onColorSelected;
   final int initialIndex;
+  double? iconSize;
 
-  const ColorPickerRow({Key? key, required this.colorList, required this.onColorSelected, required this.initialIndex})
+  ColorPickerRow({Key? key, required this.colorList, required this.onColorSelected, required this.initialIndex, this.iconSize})
       : super(key: key);
 
   @override
@@ -14,12 +15,14 @@ class ColorPickerRow extends StatefulWidget {
 
 class _ColorPickerRowState extends State<ColorPickerRow> {
   late int _selectedIndex;
+  double _iconSize = 35;
 
   @override
   void initState() {
     super.initState();
     setState(() {
       _selectedIndex = widget.initialIndex;
+      _iconSize = widget.iconSize?? 35;
     });
   }
 
@@ -28,6 +31,7 @@ class _ColorPickerRowState extends State<ColorPickerRow> {
     super.didUpdateWidget(oldWidget);
     setState(() {
       _selectedIndex = widget.initialIndex;
+      _iconSize = widget.iconSize?? 35;
     });
   }
 
@@ -40,8 +44,8 @@ class _ColorPickerRowState extends State<ColorPickerRow> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      runSpacing: 7,
       children: List.generate(
         widget.colorList.length,
             (index) => Padding(
@@ -49,14 +53,14 @@ class _ColorPickerRowState extends State<ColorPickerRow> {
           child: GestureDetector(
             onTap: () => _selectColor(index),
             child: Container(
-              width: 25,
-              height: 25,
+              width: _iconSize,
+              height: _iconSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: widget.colorList[index],
                 border: _selectedIndex == index
-                    ? Border.all(width: 4, color: CupertinoColors.white)
-                    : null,
+                    ? Border.all(width: 4, color: CupertinoColors.systemOrange)
+                    : Border.all(width: 4, color: CupertinoColors.white),
               ),
             ),
           ),

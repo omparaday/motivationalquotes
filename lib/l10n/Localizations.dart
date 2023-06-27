@@ -42,9 +42,9 @@ class L10n {
       'close': 'Close',
       'getStarted': 'Your privacy is assured. Your data or anything you do in this app is not transferred outside your phone or used by anyone else.\n\nGet started.\nWishing you a motivational times ahead!',
       'settingsWelcome': 'Choose customized look and feel with appealing arts and colors. You can also set notification to read quotes everyday.',
-      'allQuotesWelcome': 'More than 500 quotes from the great authors at all quotes page. You can search quotes by author name or keywords.',
+      'allQuotesWelcome': 'More than 500 quotes from the great authors at All Quotes page. You can search quotes by author name or keywords.',
       'todayWelcome': 'Get a new quote everyday. Mark your favorite quotes and share them with your friends and family with personalized fonts and background.',
-      'welcome': 'Welcome to Motivational Quotes!\nEncourage your day and that of your friends and family with carefully shortlisted quotes from great authors.',
+      'welcome': 'Welcome to Motivational Quotes!\nEnergize your day and that of your friends and family with carefully shortlisted quotes from great authors.',
     }
   };
 

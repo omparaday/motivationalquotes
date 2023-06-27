@@ -149,12 +149,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       : ColorPickerRow(
                       colorList: bgColorList,
                       onColorSelected: changeColor,
-                      initialIndex: bgColorList.indexOf(bgColor)),
+                      initialIndex: bgColorList.indexOf(bgColor), iconSize: 75,),
                   useImgBg
                       ? ImagePickerRow(
                       assetList: bgImages,
                       onImageSelected: changeImage,
-                      initialIndex: bgImages.indexOf(bgImage))
+                      initialIndex: bgImages.indexOf(bgImage), iconSize: 75,)
                       : SizedBox.shrink(),
                 ]))));
   }
