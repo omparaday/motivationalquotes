@@ -45,7 +45,7 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   SharedPreferences? sharedPreferences;
   late int _currentIndex;
-  bool _showWelcome = false, _showAppDownload = false;
+  bool _showWelcome = false;
   int _welcomeIndex = 1;
   Color bgColor = DEFAULT_OVERALL_BG_COLOR;
   String bgImage = DEFAULT_OVERALL_BG_IMAGE;
@@ -93,6 +93,29 @@ class _MainState extends State<Main> {
     setState (() {
       useImgBg = value;
     });
+  }
+
+  Text getWelcomeText() {
+    var textStyle = TextStyle(
+        fontSize: 18,
+        fontStyle: FontStyle.italic,
+        color: CupertinoColors.white);
+    switch (_welcomeIndex) {
+      case 1:
+        return Text(
+          L10n.of(context).resource('welcome'),
+          style: textStyle,
+        );
+      case 2:
+        return Text(L10n.of(context).resource('todayWelcome'), style: textStyle);
+      case 3:
+        return Text(L10n.of(context).resource('allQuotesWelcome'),
+            style: textStyle);
+      case 4:
+        return Text(L10n.of(context).resource('settingsWelcome'),
+            style: textStyle);
+    }
+    return Text(L10n.of(context).resource('getStarted'), style: textStyle);
   }
 
   @override
@@ -166,6 +189,75 @@ class _MainState extends State<Main> {
               },
             );
           }),
+      _showWelcome
+          ? SizedBox.expand(
+          child: CupertinoApp(
+              theme: CupertinoThemeData(
+                  textTheme: CupertinoTextThemeData(
+                      textStyle: TextStyle(
+                        fontFamily: GoogleFonts.nunito().fontFamily,
+                        color: CupertinoDynamicColor.withBrightness(
+                          color: CupertinoColors.black,
+                          darkColor: CupertinoColors.white,
+                        ),
+                      ))),
+              home: Container(
+                  padding: const EdgeInsets.only(
+                      top: 20, left: 20.0, bottom: 100.0, right: 20.0),
+                  decoration: BoxDecoration(
+                      color: CupertinoDynamicColor.withBrightness(
+                        color: Color.fromARGB(100, 60, 60, 60),
+                        darkColor: Color.fromARGB(100, 255, 255, 255),
+                      )),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Spacer(),
+                        Container(
+                            padding: const EdgeInsets.only(
+                                top: 20,
+                                left: 20.0,
+                                bottom: 20.0,
+                                right: 20.0),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(4)),
+                                color: CupertinoDynamicColor.withBrightness(
+                                  color: Color.fromARGB(230, 60, 60, 60),
+                                  darkColor:
+                                  Color.fromARGB(230, 255, 255, 255),
+                                )),
+                            child: Column(children: <Widget>[
+                              Row(children: <Widget>[
+                                CupertinoButton(
+                                    child: Text(
+                                      L10n.of(context).resource('prev'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    onPressed: _welcomeIndex == 1
+                                        ? null
+                                        : previousWelcomeScreen),
+                                Spacer(),
+                                CupertinoButton(
+                                    child: Text(
+                                      _welcomeIndex == 5
+                                          ? L10n.of(context)
+                                          .resource('close')
+                                          : L10n.of(context)
+                                          .resource('next'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    onPressed: nextWelcomeScreen)
+                              ]),
+                              getWelcomeText(),
+                            ])),
+                        (_welcomeIndex <= 4 && _welcomeIndex >= 2)
+                            ? Container(child: getArrowWidget())
+                            : SizedBox.shrink()
+                      ]))))
+          : SizedBox.shrink(),
     ]);
   }
 
@@ -251,9 +343,6 @@ class _MainState extends State<Main> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _showWelcome = prefs.getBool('SHOW_WELCOME') ?? true;
-      if (_showWelcome == false) {
-        _showAppDownload = prefs.getBool('SHOW_APP_DOWNLOAD') ?? true;
-      }
     });
   }
 
@@ -262,7 +351,6 @@ class _MainState extends State<Main> {
     setState(() {
       prefs.setBool('SHOW_WELCOME', false);
       _showWelcome = false;
-      _showAppDownload = true;
       _currentIndex = 0;
     });
   }
@@ -272,7 +360,6 @@ class _MainState extends State<Main> {
     setState(() {
       prefs.setBool('SHOW_APP_DOWNLOAD', false);
       _showWelcome = false;
-      _showAppDownload = false;
       _currentIndex = 0;
     });
   }
