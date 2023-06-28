@@ -15,7 +15,7 @@ const String KEY_OVERALL_BG_IMAGE = 'overallBgImage';
 
 const Color DEFAULT_OVERALL_BG_COLOR = commonBG;
 const String DEFAULT_OVERALL_BG_IMAGE = 'assets/bgarts/1.png';
-const bool DEFAULT_OVERALL_USE_IMG_BG = false;
+const bool DEFAULT_OVERALL_USE_IMG_BG = true;
 
 class SettingsPage extends StatefulWidget {
   final Function(Color) onColorSelected;
@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
     Color.fromARGB(255, 244, 245, 226)
   ];
   List<String> bgImages = [
-    DEFAULT_OVERALL_BG_IMAGE,
+    'assets/bgarts/1.png',
     'assets/bgarts/2.png',
     'assets/bgarts/3.png',
     'assets/bgarts/4.png',
