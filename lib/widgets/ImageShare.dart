@@ -127,7 +127,8 @@ class ImageShareState extends State<ImageShare> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+        child: Container(
       padding: EdgeInsets.all(5.0),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -136,7 +137,6 @@ class ImageShareState extends State<ImageShare> {
         RepaintBoundary(
             key: globalKey,
             child: Container(
-              width: math.min(300, MediaQuery.of(context).size.width),
               color: !useImgBg ? bgColor : null,
               decoration: useImgBg
                   ? BoxDecoration(
@@ -228,7 +228,7 @@ class ImageShareState extends State<ImageShare> {
           )
         ]),
       ]),
-    );
+    ));
   }
 
   Future<void> updateLastSettings() async {
