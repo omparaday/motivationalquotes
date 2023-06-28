@@ -44,7 +44,7 @@ class L10n {
       'settingsWelcome': 'Choose customized look and feel with appealing arts and colors. You can also set notification to read quotes everyday.',
       'allQuotesWelcome': 'More than 500 quotes from the great authors at All Quotes page. You can search quotes by author name or keywords.',
       'todayWelcome': 'Get a new quote everyday. Mark your favorite quotes and share them with your friends and family with personalized fonts and background.',
-      'welcome': 'Welcome to Motivational Quotes!\nEnergize your day and that of your friends and family with carefully shortlisted quotes from great authors.',
+      'welcome': 'Welcome to Motivational Quotes!\nEnergize your day and that of your friends and family with carefully handpicked quotes from great authors.',
     }
   };
 
