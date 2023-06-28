@@ -60,8 +60,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
         }
         DateTime nextTimeToNotify = DateTime.now().add(Duration(minutes: 5));
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
-        initTodaysQuote();
-        fetchFavoriteQuotes();
+        initTodaysPage();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         if (await prefs.getBool('isNotificationsEnabled')?? DEFAULT_NOTIFICATION_ENABLED) {
           await notificationService.showScheduledLocalNotification(
@@ -92,8 +91,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
     WidgetsBinding.instance.addObserver(this);
     _quote = null;
     _favoriteQuoteWidgets = <Widget>[];
-    initTodaysQuote();
-    fetchFavoriteQuotes();
+    initTodaysPage();
     notificationService = NotificationService();
     notificationService.initializePlatformNotifications();
   }
@@ -225,10 +223,11 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
     return result;
   }
 
-  Future<void> initTodaysQuote() async {
+  Future<void> initTodaysPage() async {
     quote.Quote? q = await quote.QuoteHelper.fetchDataIfNeeded();
     setState(() {
       _quote = q;
     });
+    fetchFavoriteQuotes();
   }
 }

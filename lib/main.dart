@@ -14,16 +14,17 @@ const double FONTSIZE = 18;
 const double MEDIUM_FONTSIZE = 20;
 const double LARGE_FONTSIZE = 28;
 const Color commonBG = Color.fromARGB(255, 250, 240, 230);
+
 void main() {
   runApp(new CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(
-        scaffoldBackgroundColor: commonBG.withOpacity(0.0),
+          scaffoldBackgroundColor: commonBG.withOpacity(0.0),
           textTheme: CupertinoTextThemeData(
               textStyle: TextStyle(
-                fontFamily: GoogleFonts.nunito().fontFamily,
-                color: CupertinoColors.black,
-              ))),
+            fontFamily: GoogleFonts.nunito().fontFamily,
+            color: CupertinoColors.black,
+          ))),
       localizationsDelegates: const [
         L10nDelegate(),
         GlobalCupertinoLocalizations.delegate,
@@ -61,13 +62,12 @@ class _MainState extends State<Main> {
 
   Future<void> initSharedPreferences() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    Color usedColor =
-    Color(sp.getInt(KEY_OVERALL_BG_COLOR) ??
-        DEFAULT_OVERALL_BG_COLOR.value);
-    String usedImage = sp.getString(KEY_OVERALL_BG_IMAGE) ??
-        DEFAULT_OVERALL_BG_IMAGE;
-    bool prevusedImgBg = sp.getBool(KEY_OVERALL_USE_IMAGE_BG) ??
-        DEFAULT_OVERALL_USE_IMG_BG;
+    Color usedColor = Color(
+        sp.getInt(KEY_OVERALL_BG_COLOR) ?? DEFAULT_OVERALL_BG_COLOR.value);
+    String usedImage =
+        sp.getString(KEY_OVERALL_BG_IMAGE) ?? DEFAULT_OVERALL_BG_IMAGE;
+    bool prevusedImgBg =
+        sp.getBool(KEY_OVERALL_USE_IMAGE_BG) ?? DEFAULT_OVERALL_USE_IMG_BG;
     setState(() {
       sharedPreferences = sp;
       bgColor = usedColor;
@@ -77,20 +77,20 @@ class _MainState extends State<Main> {
   }
 
   void onColorSelected(Color color) {
-    setState (() {
+    setState(() {
       bgColor = color;
     });
   }
 
   void onImageSelected(String image) {
-    setState (() {
+    setState(() {
       bgImage = image;
     });
     print(bgImage);
   }
 
   void onUseImageChanged(bool value) {
-    setState (() {
+    setState(() {
       useImgBg = value;
     });
   }
@@ -107,7 +107,8 @@ class _MainState extends State<Main> {
           style: textStyle,
         );
       case 2:
-        return Text(L10n.of(context).resource('todayWelcome'), style: textStyle);
+        return Text(L10n.of(context).resource('todayWelcome'),
+            style: textStyle);
       case 3:
         return Text(L10n.of(context).resource('allQuotesWelcome'),
             style: textStyle);
@@ -121,21 +122,21 @@ class _MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
-      Positioned.fill(  //
+      Positioned.fill(
         child: Container(
           color: CupertinoColors.white,
         ),
       ),
-      Positioned.fill(  //
+      Positioned.fill(
         child: Image(
           image: AssetImage(bgImage),
           opacity: const AlwaysStoppedAnimation(0.2),
-          fit : BoxFit.fill,
+          fit: BoxFit.fill,
         ),
       ),
       CupertinoTabScaffold(
           tabBar: CupertinoTabBar(
-            backgroundColor:bgColor.withOpacity(0.4),
+            backgroundColor: bgColor.withOpacity(0.4),
             currentIndex: _currentIndex,
             onTap: onTabTapped,
             items: [
@@ -156,107 +157,113 @@ class _MainState extends State<Main> {
           tabBuilder: (BuildContext context, int index) {
             return CupertinoTabView(
               builder: (BuildContext context) {
-                return CupertinoApp(
-                    debugShowCheckedModeBanner: false,
-                    theme: CupertinoThemeData(
-                      scaffoldBackgroundColor: useImgBg ? bgColor.withOpacity(0.0) : bgColor,
-                        textTheme: CupertinoTextThemeData(
-                            textStyle: TextStyle(
-                                fontSize: FONTSIZE,
-                                fontFamily: GoogleFonts.nunito().fontFamily,
-                                color: CupertinoColors.black))),
-                    localizationsDelegates: const [
-                      L10nDelegate(),
-                      GlobalCupertinoLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                    ],
-                    supportedLocales: [
-                      Locale('en', ''),
-                    ],
-                    home: CupertinoPageScaffold(
-                      resizeToAvoidBottomInset: false,
-                      child: IndexedStack(
-                        index: _currentIndex,
-                        children: [
-                          QuoteOfTheDay(),
-                          AllQuotesPage(),
-                          SettingsPage(onColorSelected: onColorSelected, onImageSelected: onImageSelected, onUseImageChanged: onUseImageChanged,),
-                        ],
-                      ),
+                return SafeArea(
+                    child: CupertinoApp(
+                  debugShowCheckedModeBanner: false,
+                  theme: CupertinoThemeData(
+                      scaffoldBackgroundColor:
+                          useImgBg ? bgColor.withOpacity(0.0) : bgColor,
+                      textTheme: CupertinoTextThemeData(
+                          textStyle: TextStyle(
+                              fontSize: FONTSIZE,
+                              fontFamily: GoogleFonts.nunito().fontFamily,
+                              color: CupertinoColors.black))),
+                  localizationsDelegates: const [
+                    L10nDelegate(),
+                    GlobalCupertinoLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                  ],
+                  supportedLocales: [
+                    Locale('en', ''),
+                  ],
+                  home: CupertinoPageScaffold(
+                    resizeToAvoidBottomInset: false,
+                    child: IndexedStack(
+                      index: _currentIndex,
+                      children: [
+                        QuoteOfTheDay(),
+                        AllQuotesPage(),
+                        SettingsPage(
+                          onColorSelected: onColorSelected,
+                          onImageSelected: onImageSelected,
+                          onUseImageChanged: onUseImageChanged,
+                        ),
+                      ],
                     ),
-                );
+                  ),
+                ));
               },
             );
           }),
       _showWelcome
           ? SizedBox.expand(
-          child: CupertinoApp(
-              theme: CupertinoThemeData(
-                  textTheme: CupertinoTextThemeData(
-                      textStyle: TextStyle(
-                        fontFamily: GoogleFonts.nunito().fontFamily,
-                        color: CupertinoDynamicColor.withBrightness(
-                          color: CupertinoColors.black,
-                          darkColor: CupertinoColors.white,
-                        ),
-                      ))),
-              home: Container(
-                  padding: const EdgeInsets.only(
-                      top: 20, left: 20.0, bottom: 100.0, right: 20.0),
-                  decoration: BoxDecoration(
-                      color: CupertinoDynamicColor.withBrightness(
+              child: CupertinoApp(
+                  theme: CupertinoThemeData(
+                      textTheme: CupertinoTextThemeData(
+                          textStyle: TextStyle(
+                    fontFamily: GoogleFonts.nunito().fontFamily,
+                    color: CupertinoDynamicColor.withBrightness(
+                      color: CupertinoColors.black,
+                      darkColor: CupertinoColors.white,
+                    ),
+                  ))),
+                  home: Container(
+                      padding: const EdgeInsets.only(
+                          top: 20, left: 20.0, bottom: 100.0, right: 20.0),
+                      decoration: BoxDecoration(
+                          color: CupertinoDynamicColor.withBrightness(
                         color: Color.fromARGB(100, 60, 60, 60),
                         darkColor: Color.fromARGB(100, 255, 255, 255),
                       )),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Spacer(),
-                        Container(
-                            padding: const EdgeInsets.only(
-                                top: 20,
-                                left: 20.0,
-                                bottom: 20.0,
-                                right: 20.0),
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(4)),
-                                color: CupertinoDynamicColor.withBrightness(
-                                  color: Color.fromARGB(230, 60, 60, 60),
-                                  darkColor:
-                                  Color.fromARGB(230, 255, 255, 255),
-                                )),
-                            child: Column(children: <Widget>[
-                              Row(children: <Widget>[
-                                CupertinoButton(
-                                    child: Text(
-                                      L10n.of(context).resource('prev'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    onPressed: _welcomeIndex == 1
-                                        ? null
-                                        : previousWelcomeScreen),
-                                Spacer(),
-                                CupertinoButton(
-                                    child: Text(
-                                      _welcomeIndex == 5
-                                          ? L10n.of(context)
-                                          .resource('close')
-                                          : L10n.of(context)
-                                          .resource('next'),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    onPressed: nextWelcomeScreen)
-                              ]),
-                              getWelcomeText(),
-                            ])),
-                        (_welcomeIndex <= 4 && _welcomeIndex >= 2)
-                            ? Container(child: getArrowWidget())
-                            : SizedBox.shrink()
-                      ]))))
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Spacer(),
+                            Container(
+                                padding: const EdgeInsets.only(
+                                    top: 20,
+                                    left: 20.0,
+                                    bottom: 20.0,
+                                    right: 20.0),
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(4)),
+                                    color: CupertinoDynamicColor.withBrightness(
+                                      color: Color.fromARGB(230, 60, 60, 60),
+                                      darkColor:
+                                          Color.fromARGB(230, 255, 255, 255),
+                                    )),
+                                child: Column(children: <Widget>[
+                                  Row(children: <Widget>[
+                                    CupertinoButton(
+                                        child: Text(
+                                          L10n.of(context).resource('prev'),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        onPressed: _welcomeIndex == 1
+                                            ? null
+                                            : previousWelcomeScreen),
+                                    Spacer(),
+                                    CupertinoButton(
+                                        child: Text(
+                                          _welcomeIndex == 5
+                                              ? L10n.of(context)
+                                                  .resource('close')
+                                              : L10n.of(context)
+                                                  .resource('next'),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        onPressed: nextWelcomeScreen)
+                                  ]),
+                                  getWelcomeText(),
+                                ])),
+                            (_welcomeIndex <= 4 && _welcomeIndex >= 2)
+                                ? Container(child: getArrowWidget())
+                                : SizedBox.shrink()
+                          ]))))
           : SizedBox.shrink(),
     ]);
   }
