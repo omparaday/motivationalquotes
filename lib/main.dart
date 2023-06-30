@@ -16,6 +16,7 @@ const double LARGE_FONTSIZE = 28;
 const Color commonBG = Color.fromARGB(255, 250, 240, 230);
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(new CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(

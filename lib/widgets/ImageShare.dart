@@ -161,7 +161,6 @@ class ImageShareState extends State<ImageShare> {
                                 ]
                               : null,
                           fontFamily: font,
-                          fontWeight: FontWeight.w400,
                           color: CupertinoColors.black,
                           fontSize: LARGE_FONTSIZE)),
                   Row(

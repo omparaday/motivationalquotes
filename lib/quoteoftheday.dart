@@ -167,6 +167,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(height: 20,),
                   Text(
                     L10n.of(context).resource('quoteoftheday'),
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),

@@ -102,6 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: SingleChildScrollView(
             child: SafeArea(
                 child: Column(children: <Widget>[
+                  SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[

@@ -111,6 +111,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
         child: SafeArea(
           child: Column(
             children: <Widget>[
+              SizedBox(height: 20,),
               CupertinoSearchTextField(
                 placeholder: L10n.of(context).resource('searchHelp'),
                 onChanged: (value) => filterQuotes(value),
