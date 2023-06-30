@@ -6,6 +6,8 @@ import 'package:motivational_quotes/dbhelpers/QuoteHelper.dart';
 import 'package:motivational_quotes/widgets/DecoratedText.dart';
 import 'package:motivational_quotes/widgets/ImageShare.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'dart:io';
 
 import 'l10n/Localizations.dart';
 
@@ -18,6 +20,53 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   late List<Widget> allQuotesWidgetList;
   late Map<String, dynamic> filteredQuotesList;
   late Map<String, dynamic> originalQuotesList;
+  InterstitialAd? _interstitialAd;
+  int counter = 0;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
+
+  /// Loads an interstitial ad.
+  void _loadAd() {
+    InterstitialAd.load(
+        adUnitId: _adUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (InterstitialAd ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              // Called when the ad showed the full screen content.
+                onAdShowedFullScreenContent: (ad) {},
+                // Called when an impression occurs on the ad.
+                onAdImpression: (ad) {},
+                // Called when the ad failed to show full screen content.
+                onAdFailedToShowFullScreenContent: (ad, err) {
+                  ad.dispose();
+                },
+                // Called when the ad dismissed full screen content.
+                onAdDismissedFullScreenContent: (ad) {
+                  ad.dispose();
+                },
+                // Called when a click is recorded for an ad.
+                onAdClicked: (ad) {});
+
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            // ignore: avoid_print
+            print('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   void dataChangeCallback() {
     fetchAllQuotes();
@@ -109,8 +158,17 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
           context: context,
           builder: (BuildContext context) => Dialog(
               backgroundColor:
-                  CupertinoTheme.of(context).scaffoldBackgroundColor,
-              child: ImageShare(name, quote, author)));
+              CupertinoTheme.of(context).scaffoldBackgroundColor,
+              child: ImageShare(name, quote, author))).then((value) {
+        counter++;
+        if (counter == 2) {
+          _loadAd();
+        }
+        if (counter >= 3) {
+          _interstitialAd?.show();
+          counter = 0;
+        }
+      });
     } else {
       Share.share(quote);
     }

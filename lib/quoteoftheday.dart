@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'NotificationService.dart';
 import 'dbhelpers/QuoteHelper.dart' as quote;
 import 'l10n/Localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'dart:math' as math;
 
@@ -37,6 +39,53 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
   late final NotificationService notificationService;
   late String _dateKey;
   GlobalKey globalKey = GlobalKey();
+  InterstitialAd? _interstitialAd;
+  int counter = 0;
+
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
+
+  /// Loads an interstitial ad.
+  void _loadAd() {
+    InterstitialAd.load(
+        adUnitId: _adUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (InterstitialAd ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              // Called when the ad showed the full screen content.
+                onAdShowedFullScreenContent: (ad) {},
+                // Called when an impression occurs on the ad.
+                onAdImpression: (ad) {},
+                // Called when the ad failed to show full screen content.
+                onAdFailedToShowFullScreenContent: (ad, err) {
+                  ad.dispose();
+                },
+                // Called when the ad dismissed full screen content.
+                onAdDismissedFullScreenContent: (ad) {
+                  ad.dispose();
+                },
+                // Called when a click is recorded for an ad.
+                onAdClicked: (ad) {});
+
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            // ignore: avoid_print
+            print('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   void showSharePopup(String name, String content, String author) {
     if (!kIsWeb) {
@@ -44,8 +93,13 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
           context: context,
           builder: (BuildContext context) => Dialog(
               backgroundColor:
-                  CupertinoTheme.of(context).scaffoldBackgroundColor,
-              child: ImageShare(name, content ?? '', author)));
+              CupertinoTheme.of(context).scaffoldBackgroundColor,
+              child: ImageShare(name, content ?? '', author))).then((value) {
+        if (counter >= 3) {
+          _interstitialAd?.show();
+          counter = 0;
+        }
+      });
     } else {
       Share.share(content ?? '');
     }
@@ -55,6 +109,10 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
+        counter++;
+        if (counter == 3) {
+          _loadAd();
+        }
         if (_dateKey != dailydata.getDateKeyFormat(DateTime.now())) {
           _dateKey = dailydata.getDateKeyFormat(DateTime.now());
         }
@@ -62,14 +120,15 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
         initTodaysPage();
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        if (await prefs.getBool('isNotificationsEnabled')?? DEFAULT_NOTIFICATION_ENABLED) {
+        if (await prefs.getBool('isNotificationsEnabled') ??
+            DEFAULT_NOTIFICATION_ENABLED) {
           await notificationService.showScheduledLocalNotification(
               id: ID_DAILY_NOTIFICATION,
-              title: L10n.of(context).resource(
-                  'dailyReminderNotificationTitle'),
+              title:
+              L10n.of(context).resource('dailyReminderNotificationTitle'),
               body: L10n.of(context).resource('dailyReminderNotificationBody'),
-              payload: L10n.of(context).resource(
-                  'dailyReminderNotificationPayload'));
+              payload: L10n.of(context)
+                  .resource('dailyReminderNotificationPayload'));
         }
         break;
       case AppLifecycleState.inactive:
@@ -114,71 +173,84 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                   ),
                   _quote != null
                       ? GestureDetector(
-                          onHorizontalDragEnd: (DragEndDetails details) {
-                            if (details.velocity.pixelsPerSecond.dx.abs() >
-                                details.velocity.pixelsPerSecond.dy.abs()) {
-                              if (details.primaryVelocity! > 0) {
-                                // User swiped Left
-                              } else if (details.primaryVelocity! < 0) {
-                                // User swiped Right
-                              }
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(5.0),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                            ),
-                            child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  RepaintBoundary(
-                                      key: globalKey,
-                                      child: Container(
-                                        width: math.min(300,
-                                            MediaQuery.of(context).size.width),
-                                        padding: EdgeInsets.all(10),
-                                        child: Column(
-                                          children: <Widget>[
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(_quote?.content ?? "",
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        GoogleFonts.caveat()
-                                                            .fontFamily,
-                                                    color:
-                                                        CupertinoColors.black,
-                                                    fontSize: LARGE_FONTSIZE)),
-                                            Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                children: <Widget>[Text(_quote?.author ?? '',
-                                                    style: TextStyle(
-                                                        fontFamily: GoogleFonts.caveat().fontFamily,
-                                                        color: CupertinoColors.black,
-                                                        fontSize: MEDIUM_FONTSIZE))])
-                                          ],
-                                        ),
-                                      )),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                      onHorizontalDragEnd: (DragEndDetails details) {
+                        if (details.velocity.pixelsPerSecond.dx.abs() >
+                            details.velocity.pixelsPerSecond.dy.abs()) {
+                          if (details.primaryVelocity! > 0) {
+                            // User swiped Left
+                          } else if (details.primaryVelocity! < 0) {
+                            // User swiped Right
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                          BorderRadius.all(Radius.circular(5.0)),
+                        ),
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              RepaintBoundary(
+                                  key: globalKey,
+                                  child: Container(
+                                    width: math.min(300,
+                                        MediaQuery.of(context).size.width),
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
                                       children: <Widget>[
-                                        CupertinoButton(
-                                          onPressed: () => {showSharePopup(_quote?.name ?? '', _quote?.content ?? '', _quote?.author?? '')},
-                                          child: Icon(CupertinoIcons.share),
+                                        SizedBox(
+                                          height: 10,
                                         ),
-                                        CupertinoButton(
-                                          onPressed: toggleFavoriteQuote,
-                                          child: _isFavoriteQuote
-                                              ? Icon(CupertinoIcons.heart_fill)
-                                              : Icon(CupertinoIcons.heart),
-                                        )
-                                      ]),
-                                ]),
-                          ))
+                                        Text(_quote?.content ?? "",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                GoogleFonts.caveat()
+                                                    .fontFamily,
+                                                color:
+                                                CupertinoColors.black,
+                                                fontSize: LARGE_FONTSIZE)),
+                                        Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              Text(_quote?.author ?? '',
+                                                  style: TextStyle(
+                                                      fontFamily:
+                                                      GoogleFonts
+                                                          .caveat()
+                                                          .fontFamily,
+                                                      color: CupertinoColors
+                                                          .black,
+                                                      fontSize:
+                                                      MEDIUM_FONTSIZE))
+                                            ])
+                                      ],
+                                    ),
+                                  )),
+                              Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    CupertinoButton(
+                                      onPressed: () => {
+                                        showSharePopup(
+                                            _quote?.name ?? '',
+                                            _quote?.content ?? '',
+                                            _quote?.author ?? '')
+                                      },
+                                      child: Icon(CupertinoIcons.share),
+                                    ),
+                                    CupertinoButton(
+                                      onPressed: toggleFavoriteQuote,
+                                      child: _isFavoriteQuote
+                                          ? Icon(CupertinoIcons.heart_fill)
+                                          : Icon(CupertinoIcons.heart),
+                                    )
+                                  ]),
+                            ]),
+                      ))
                       : SizedBox.shrink(),
                   Text(
                     L10n.of(context).resource('favorites'),
@@ -186,10 +258,10 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                   ),
                   Container(
                       child: Column(
-                    key: UniqueKey(),
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: _favoriteQuoteWidgets,
-                  ))
+                        key: UniqueKey(),
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: _favoriteQuoteWidgets,
+                      ))
                 ],
               ),
             ),
