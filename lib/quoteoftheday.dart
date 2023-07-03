@@ -95,6 +95,13 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
               backgroundColor:
               CupertinoTheme.of(context).scaffoldBackgroundColor,
               child: ImageShare(name, content ?? '', author))).then((value) {
+        counter++;
+        if (counter == 3) {
+          _loadAd();
+        }
+        if (_dateKey != dailydata.getDateKeyFormat(DateTime.now())) {
+          _dateKey = dailydata.getDateKeyFormat(DateTime.now());
+        }
         if (counter >= 3) {
           _interstitialAd?.show();
           counter = 0;
@@ -109,14 +116,6 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        counter++;
-        if (counter == 3) {
-          _loadAd();
-        }
-        if (_dateKey != dailydata.getDateKeyFormat(DateTime.now())) {
-          _dateKey = dailydata.getDateKeyFormat(DateTime.now());
-        }
-        DateTime nextTimeToNotify = DateTime.now().add(Duration(minutes: 5));
         notificationService.cancelSingleNotifications(ID_DAILY_NOTIFICATION);
         initTodaysPage();
         SharedPreferences prefs = await SharedPreferences.getInstance();
