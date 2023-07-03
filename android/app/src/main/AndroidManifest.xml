@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.motivational_quotes">
+    package="com.monsoon.motivational_quotes">
    <application
         android:label="Quotes"
         android:name="${applicationName}"

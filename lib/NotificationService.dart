@@ -91,7 +91,7 @@ class NotificationService {
       id,
       title,
       body,
-      tz.TZDateTime.now(tz.local).add(Duration(seconds: (3600*24))),
+      tz.TZDateTime.now(tz.local).add(Duration(hours: 24)),
       platformChannelSpecifics,
       payload: payload,
       uiLocalNotificationDateInterpretation:
