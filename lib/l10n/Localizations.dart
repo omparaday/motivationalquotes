@@ -36,7 +36,7 @@ class L10n {
       'dailyReminderNotificationPayload': '',
       'art': 'Art',
       'color': 'Color',
-      'theme': 'Theme',
+      'theme': 'Background Theme',
       'prev': 'Previous',
       'next': 'Next',
       'close': 'Close',

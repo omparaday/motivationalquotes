@@ -125,13 +125,13 @@ class _MainState extends State<Main> {
     return Stack(children: <Widget>[
       Positioned.fill(
         child: Container(
-          color: CupertinoColors.white,
+          color: useImgBg ? CupertinoColors.white : bgColor,
         ),
       ),
       Positioned.fill(
         child: Image(
           image: AssetImage(bgImage),
-          opacity: const AlwaysStoppedAnimation(0.2),
+          opacity: AlwaysStoppedAnimation(useImgBg ? 0.2 : 0.0),
           fit: BoxFit.fill,
         ),
       ),

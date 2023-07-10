@@ -1,15 +1,15 @@
 import 'dart:typed_data';
-import 'package:motivational_quotes/main.dart';
+import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:motivational_quotes/main.dart';
 import 'package:motivational_quotes/settingspage.dart';
 import 'package:motivational_quotes/widgets/BGImagePickerWidget.dart';
 import 'package:motivational_quotes/widgets/FontPickerRow.dart';
 import 'package:share_plus/share_plus.dart';
-import 'dart:ui' as ui;
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:math' as math;
 
 import '../l10n/Localizations.dart';
 import 'ColorPickerWidget.dart';
@@ -100,7 +100,7 @@ class ImageShareState extends State<ImageShare> {
 
   Future<void> _capturePng() async {
     RenderRepaintBoundary boundary =
-        globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage(pixelRatio: 4.0);
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     setState(() {
@@ -129,105 +129,106 @@ class ImageShareState extends State<ImageShare> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-      padding: EdgeInsets.all(5.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          color: overallBgColor),
-      child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-        RepaintBoundary(
-            key: globalKey,
-            child: Container(
-              color: !useImgBg ? bgColor : null,
-              decoration: useImgBg
-                  ? BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(bgImage),
-                          fit: BoxFit.cover,
-                          opacity: 0.4),
-                    )
-                  : null,
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(text,
-                      style: TextStyle(
-                          shadows: useImgBg
-                              ? <Shadow>[
-                                  Shadow(
-                                    offset: Offset(1.0, 1.0),
-                                    blurRadius: 3.0,
-                                    color: CupertinoColors.secondaryLabel,
-                                  )
-                                ]
-                              : null,
-                          fontFamily: font,
-                          color: CupertinoColors.black,
-                          fontSize: LARGE_FONTSIZE)),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Text(author,
-                            style: TextStyle(
-                                shadows: useImgBg
-                                    ? <Shadow>[
-                                        Shadow(
-                                          offset: Offset(1.0, 1.0),
-                                          blurRadius: 3.0,
-                                          color: CupertinoColors.secondaryLabel,
-                                        )
-                                      ]
-                                    : null,
-                                fontFamily: GoogleFonts.caveat().fontFamily,
-                                color: CupertinoColors.black,
-                                fontSize: MEDIUM_FONTSIZE))
-                      ]),
-                ],
-              ),
-            )),
-        SizedBox(
-          height: 10,
-        ),
-        RoundedSegmentControl<bool>(
-          groupValue: useImgBg,
-          onValueChanged: (bool value) {
-            setState(() {
-              useImgBg = value;
-              sharedPrefs.setBool(KEY_USE_IMAGE_BG, useImgBg);
-            });
-          },
-          children: <bool, String>{
-            true: L10n.of(context).resource('art'),
-            false: L10n.of(context).resource('color'),
-          },
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        useImgBg
-            ? SizedBox.shrink()
-            : ColorPickerRow(
+          padding: EdgeInsets.all(5.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              color: overallBgColor),
+          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            RepaintBoundary(
+                key: globalKey,
+                child: Container(
+                  color: !useImgBg ? bgColor : null,
+                  decoration: useImgBg
+                      ? BoxDecoration(
+                    color: CupertinoColors.white,
+                    image: DecorationImage(
+                        image: AssetImage(bgImage),
+                        fit: BoxFit.cover,
+                        opacity: 0.4),
+                  )
+                      : null,
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: <Widget>[
+                      Text(text,
+                          style: TextStyle(
+                              shadows: useImgBg
+                                  ? <Shadow>[
+                                Shadow(
+                                  offset: Offset(1.0, 1.0),
+                                  blurRadius: 3.0,
+                                  color: CupertinoColors.secondaryLabel,
+                                )
+                              ]
+                                  : null,
+                              fontFamily: font,
+                              color: CupertinoColors.black,
+                              fontSize: LARGE_FONTSIZE)),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Text(author,
+                                style: TextStyle(
+                                    shadows: useImgBg
+                                        ? <Shadow>[
+                                      Shadow(
+                                        offset: Offset(1.0, 1.0),
+                                        blurRadius: 3.0,
+                                        color: CupertinoColors.secondaryLabel,
+                                      )
+                                    ]
+                                        : null,
+                                    fontFamily: GoogleFonts.caveat().fontFamily,
+                                    color: CupertinoColors.black,
+                                    fontSize: MEDIUM_FONTSIZE))
+                          ]),
+                    ],
+                  ),
+                )),
+            SizedBox(
+              height: 10,
+            ),
+            RoundedSegmentControl<bool>(
+              groupValue: useImgBg,
+              onValueChanged: (bool value) {
+                setState(() {
+                  useImgBg = value;
+                  sharedPrefs.setBool(KEY_USE_IMAGE_BG, useImgBg);
+                });
+              },
+              children: <bool, String>{
+                true: L10n.of(context).resource('art'),
+                false: L10n.of(context).resource('color'),
+              },
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            useImgBg
+                ? SizedBox.shrink()
+                : ColorPickerRow(
                 colorList: bgColorList,
                 onColorSelected: changeColor,
                 initialIndex: bgColorList.indexOf(bgColor)),
-        useImgBg
-            ? ImagePickerRow(
+            useImgBg
+                ? ImagePickerRow(
                 assetList: bgImages,
                 onImageSelected: changeImage,
                 initialIndex: bgImages.indexOf(bgImage))
-            : SizedBox.shrink(),
-        FontPickerRow(
-          fontList: fontList,
-          onFontSelected: changeFont,
-          initialIndex: fontList.indexOf(font),
-        ),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
-          CupertinoButton(
-            onPressed: shareImage,
-            child: Icon(CupertinoIcons.share),
-          )
-        ]),
-      ]),
-    ));
+                : SizedBox.shrink(),
+            FontPickerRow(
+              fontList: fontList,
+              onFontSelected: changeFont,
+              initialIndex: fontList.indexOf(font),
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+              CupertinoButton(
+                onPressed: shareImage,
+                child: Icon(CupertinoIcons.share),
+              )
+            ]),
+          ]),
+        ));
   }
 
   Future<void> updateLastSettings() async {
@@ -235,7 +236,7 @@ class ImageShareState extends State<ImageShare> {
     overallBgColor = Color(sharedPrefs.getInt(KEY_OVERALL_BG_COLOR) ??
         DEFAULT_OVERALL_BG_COLOR.value);
     Color usedColor =
-        Color(sharedPrefs.getInt(KEY_BG_COLOR) ?? DEFAULT_BG_COLOR.value);
+    Color(sharedPrefs.getInt(KEY_BG_COLOR) ?? DEFAULT_BG_COLOR.value);
     String usedImage = sharedPrefs.getString(KEY_BG_IMAGE) ?? DEFAULT_BG_IMAGE;
     String? usedFont = sharedPrefs.getString(KEY_SHARE_FONT) ??
         GoogleFonts.caveat().fontFamily;
