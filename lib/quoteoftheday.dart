@@ -43,8 +43,8 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
   int counter = 0;
 
   final String _adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-8924486974511569~2606984754'
-      : 'ca-app-pub-8924486974511569~7400463668';
+      ? 'ca-app-pub-8924486974511569/1126645458'
+      : 'ca-app-pub-8924486974511569/2631298817';
 
   /// Loads an interstitial ad.
   void _loadAd() {
