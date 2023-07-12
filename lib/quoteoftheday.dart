@@ -16,13 +16,14 @@ import 'NotificationService.dart';
 import 'dbhelpers/QuoteHelper.dart' as quote;
 import 'l10n/Localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import 'dart:math' as math;
 
 import 'main.dart';
 
 const int ID_DAILY_NOTIFICATION = 1;
-
+const String KEY_LAST_REVIEW_REQUESTED = 'last_review_requested';
 class QuoteOfTheDay extends StatefulWidget {
   @override
   State<QuoteOfTheDay> createState() => _QuoteOfTheDayState();
@@ -30,8 +31,6 @@ class QuoteOfTheDay extends StatefulWidget {
 
 class _QuoteOfTheDayState extends State<QuoteOfTheDay>
     with WidgetsBindingObserver {
-  late SharedPreferences _prefs;
-  late DateTime _lastFetchTime;
   late quote.Quote? _quote;
   bool _isFavoriteQuote = false;
   late List<Widget> _favoriteQuoteWidgets;
@@ -42,9 +41,17 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
   InterstitialAd? _interstitialAd;
   int counter = 0;
 
+  // Testing
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
+
+/*
+  // Production
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-8924486974511569/1126645458'
       : 'ca-app-pub-8924486974511569/2631298817';
+ */
 
   /// Loads an interstitial ad.
   void _loadAd() {
@@ -105,10 +112,30 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
         if (counter >= 3) {
           _interstitialAd?.show();
           counter = 0;
+        } else {
+          requestAppReview();
         }
       });
     } else {
       Share.share(content ?? '');
+    }
+  }
+
+  void requestAppReview() async {
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    if (!_prefs.containsKey(KEY_LAST_REVIEW_REQUESTED)) {
+      await _prefs.setInt(KEY_LAST_REVIEW_REQUESTED, now.subtract(Duration(days: 25)).millisecondsSinceEpoch);
+    }
+    DateTime lastDateReviewRequested = DateTime.fromMillisecondsSinceEpoch(
+      _prefs.getInt(KEY_LAST_REVIEW_REQUESTED) ?? 0,
+    );
+    if (now.difference(lastDateReviewRequested).inDays > 30) {
+      final InAppReview inAppReview = InAppReview.instance;
+      if (await inAppReview.isAvailable()) {
+        inAppReview.requestReview();
+      }
+      await _prefs.setInt(KEY_LAST_REVIEW_REQUESTED, now.millisecondsSinceEpoch);
     }
   }
 

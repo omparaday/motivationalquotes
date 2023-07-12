@@ -23,9 +23,16 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   InterstitialAd? _interstitialAd;
   int counter = 0;
 
+  // Testing
+  final String _adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
+  /*
+  // Production
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-8924486974511569/1126645458'
       : 'ca-app-pub-8924486974511569/2631298817';
+   */
 
   /// Loads an interstitial ad.
   void _loadAd() {
