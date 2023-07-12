@@ -27,6 +27,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   final String _adUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/1033173712'
       : 'ca-app-pub-3940256099942544/4411468910';
+
   /*
   // Production
   final String _adUnitId = Platform.isAndroid
@@ -43,7 +44,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
           // Called when an ad is successfully received.
           onAdLoaded: (InterstitialAd ad) {
             ad.fullScreenContentCallback = FullScreenContentCallback(
-              // Called when the ad showed the full screen content.
+                // Called when the ad showed the full screen content.
                 onAdShowedFullScreenContent: (ad) {},
                 // Called when an impression occurs on the ad.
                 onAdImpression: (ad) {},
@@ -114,33 +115,37 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(left: 10.0, right: 10.0),
-      child: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20,),
-              CupertinoSearchTextField(
-                placeholder: L10n.of(context).resource('searchHelp'),
-                onChanged: (value) => filterQuotes(value),
+      child: SafeArea(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 20,
+            ),
+            CupertinoSearchTextField(
+              placeholder: L10n.of(context).resource('searchHelp'),
+              onChanged: (value) => filterQuotes(value),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: filteredQuotesList.length,
+                  itemBuilder: (context, index) {
+                    String name = filteredQuotesList.keys.elementAt(index);
+                    dynamic value = filteredQuotesList[name];
+                    return DecoratedText(
+                      name,
+                      value[value.keys.elementAt(0)].toString(),
+                      value.keys.elementAt(0), showSharePopup,
+                      key: ValueKey<String>(name), // Assigning a unique key
+                    );
+                  },
+                  addAutomaticKeepAlives: true,
+                ),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: filteredQuotesList.length,
-                itemBuilder: (context, index) {
-                  String name = filteredQuotesList.keys.elementAt(index);
-                  dynamic value = filteredQuotesList[name];
-                  return DecoratedText(
-                    name,
-                    value[value.keys.elementAt(0)].toString(),
-                    value.keys.elementAt(0), showSharePopup,
-                    key: ValueKey<String>(name), // Assigning a unique key
-                  );
-                },
-                addAutomaticKeepAlives: true,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -166,7 +171,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
           context: context,
           builder: (BuildContext context) => Dialog(
               backgroundColor:
-              CupertinoTheme.of(context).scaffoldBackgroundColor,
+                  CupertinoTheme.of(context).scaffoldBackgroundColor,
               child: ImageShare(name, quote, author))).then((value) {
         counter++;
         if (counter == 2) {
