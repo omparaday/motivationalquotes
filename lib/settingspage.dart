@@ -70,7 +70,6 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       bgImage = selectedImage;
     });
-    print(selectedImage);
     widget.onImageSelected(selectedImage);
   }
 

@@ -119,12 +119,13 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             CupertinoSearchTextField(
               placeholder: L10n.of(context).resource('searchHelp'),
               onChanged: (value) => filterQuotes(value),
             ),
+            SizedBox(height: 5,),
             Expanded(
               child: SingleChildScrollView(
                 child: ListView.builder(

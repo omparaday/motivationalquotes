@@ -87,7 +87,6 @@ class _MainState extends State<Main> {
     setState(() {
       bgImage = image;
     });
-    print(bgImage);
   }
 
   void onUseImageChanged(bool value) {
