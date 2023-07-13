@@ -46,7 +46,7 @@ class DecoratedTextState extends State<DecoratedText> {
         child: Slidable(
           child: GestureDetector(
               onTap: () {
-                _onTap(_name, _text, _author);
+                _onTap(_text, _author);
                 setState(() {
                   showOverflow = false;
                 });

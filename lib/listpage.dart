@@ -166,7 +166,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
     setState(() {});
   }
 
-  void showSharePopup(String name, String quote, String author) {
+  void showSharePopup(String quote, String author) {
     if (!kIsWeb) {
       showCupertinoModalPopup<void>(
           context: context,

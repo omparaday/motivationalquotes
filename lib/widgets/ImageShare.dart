@@ -36,6 +36,7 @@ const bool DEFAULT_USE_IMG_BG = true;
 class ImageShareState extends State<ImageShare> {
   String text, author;
   bool isEditing = false, textFocussed = false;
+  double preferredFontSize = LARGE_FONTSIZE;
   late TextEditingController writeTextController;
 
   ImageShareState(String this.text, String this.author) {
@@ -46,7 +47,7 @@ class ImageShareState extends State<ImageShare> {
 
   GlobalKey globalKey = GlobalKey();
   late Uint8List pngBytes;
-  bool clicked = false;
+  bool captured = false;
   Color bgColor = DEFAULT_BG_COLOR;
   Color overallBgColor = DEFAULT_OVERALL_BG_COLOR;
   String bgImage = DEFAULT_BG_IMAGE;
@@ -111,6 +112,7 @@ class ImageShareState extends State<ImageShare> {
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     setState(() {
       pngBytes = byteData!.buffer.asUint8List();
+      captured = true;
     });
   }
 
@@ -152,8 +154,8 @@ class ImageShareState extends State<ImageShare> {
                   )
                       : null,
                   padding: EdgeInsets.all(10),
-                  child: isEditing ?
-                  Focus(
+                  child: isEditing
+                      ? Focus(
                       onFocusChange: (focus) => setState(() {
                         textFocussed = focus;
                       }),
@@ -175,7 +177,7 @@ class ImageShareState extends State<ImageShare> {
                                 : null,
                             fontFamily: font,
                             color: CupertinoColors.systemGrey,
-                            fontSize: LARGE_FONTSIZE),
+                            fontSize: preferredFontSize),
                         style: TextStyle(
                             shadows: useImgBg
                                 ? <Shadow>[
@@ -188,19 +190,18 @@ class ImageShareState extends State<ImageShare> {
                                 : null,
                             fontFamily: font,
                             color: CupertinoColors.black,
-                            fontSize: LARGE_FONTSIZE),
+                            fontSize: preferredFontSize),
                         suffix: textFocussed
                             ? CupertinoButton(
-                          child: new Icon(CupertinoIcons
-                              .checkmark_circle),
+                          child:
+                          new Icon(CupertinoIcons.checkmark_circle),
                           onPressed: () {
-                            FocusManager.instance.primaryFocus
-                                ?.unfocus();
+                            FocusManager.instance.primaryFocus?.unfocus();
                           },
                         )
                             : SizedBox.shrink(),
-                        placeholder: L10n.of(context)
-                            .resource('enterTextMessage'),
+                        placeholder:
+                        L10n.of(context).resource('enterTextMessage'),
                       ))
                       : Column(
                     children: <Widget>[
@@ -217,24 +218,26 @@ class ImageShareState extends State<ImageShare> {
                                   : null,
                               fontFamily: font,
                               color: CupertinoColors.black,
-                              fontSize: LARGE_FONTSIZE)),
+                              fontSize: preferredFontSize)),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            Text(author,
+                            Flexible(
+                                child: Text(author,
                                 style: TextStyle(
                                     shadows: useImgBg
                                         ? <Shadow>[
                                       Shadow(
                                         offset: Offset(1.0, 1.0),
                                         blurRadius: 3.0,
-                                        color: CupertinoColors.secondaryLabel,
+                                        color: CupertinoColors
+                                            .secondaryLabel,
                                       )
                                     ]
                                         : null,
-                                    fontFamily: GoogleFonts.caveat().fontFamily,
+                                    fontFamily: font,
                                     color: CupertinoColors.black,
-                                    fontSize: MEDIUM_FONTSIZE))
+                                    fontSize: preferredFontSize*0.8)))
                           ]),
                     ],
                   ),
@@ -277,8 +280,49 @@ class ImageShareState extends State<ImageShare> {
             ),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               CupertinoButton(
-                onPressed: textFocussed ? null : shareImage,
-                child: Icon(CupertinoIcons.share, color: textFocussed ? CupertinoColors.systemGrey : CupertinoColors.activeBlue,),
+                onPressed: preferredFontSize == 9
+                    ? null
+                    : () {
+                  setState(() {
+                    preferredFontSize--;
+                  });
+                },
+                child: Text(
+                  'Aa',
+                  style: TextStyle(
+                      color: preferredFontSize == 9
+                          ? CupertinoColors.systemGrey
+                          : CupertinoColors.activeBlue,
+                      fontSize: VERYSMALL_FONTSIZE),
+                ),
+              ),
+              CupertinoButton(
+                onPressed: preferredFontSize == 34
+                    ? null
+                    : () {
+                  setState(() {
+                    preferredFontSize++;
+                  });
+                },
+                child: Text(
+                  'Aa',
+                  style: TextStyle(
+                      color: preferredFontSize == 34
+                          ? CupertinoColors.systemGrey
+                          : CupertinoColors.activeBlue,
+                      fontSize: MEDIUM_FONTSIZE),
+                ),
+              ),
+              CupertinoButton(
+                onPressed: textFocussed ? null : () {
+                  captured = false;
+                  shareImage();},
+                child: Icon(
+                  CupertinoIcons.share,
+                  color: textFocussed
+                      ? CupertinoColors.systemGrey
+                      : CupertinoColors.activeBlue,
+                ),
               )
             ]),
           ]),
