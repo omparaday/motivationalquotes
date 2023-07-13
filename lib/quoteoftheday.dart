@@ -266,9 +266,7 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                                       },
                                       child: Icon(CupertinoIcons.pencil_ellipsis_rectangle),
                                     ),
-                                    VerticalDivider(
-                                      color: Colors.black,
-                                      thickness: 40,
+                                    SizedBox(
                                       width: 20,
                                     ),
                                     CupertinoButton(
