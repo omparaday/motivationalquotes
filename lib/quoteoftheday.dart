@@ -94,14 +94,14 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
     super.dispose();
   }
 
-  void showSharePopup(String name, String content, String author) {
+  void showSharePopup(String content, String author) {
     if (!kIsWeb) {
       showCupertinoModalPopup<void>(
           context: context,
           builder: (BuildContext context) => Dialog(
               backgroundColor:
               CupertinoTheme.of(context).scaffoldBackgroundColor,
-              child: ImageShare(name, content ?? '', author))).then((value) {
+              child: ImageShare(content ?? '', author))).then((value) {
         counter++;
         if (counter == 3) {
           _loadAd();
@@ -262,8 +262,18 @@ class _QuoteOfTheDayState extends State<QuoteOfTheDay>
                                   children: <Widget>[
                                     CupertinoButton(
                                       onPressed: () => {
+                                        showSharePopup('', '')
+                                      },
+                                      child: Icon(CupertinoIcons.pencil_ellipsis_rectangle),
+                                    ),
+                                    VerticalDivider(
+                                      color: Colors.black,
+                                      thickness: 40,
+                                      width: 20,
+                                    ),
+                                    CupertinoButton(
+                                      onPressed: () => {
                                         showSharePopup(
-                                            _quote?.name ?? '',
                                             _quote?.content ?? '',
                                             _quote?.author ?? '')
                                       },

@@ -21,12 +21,12 @@ const String KEY_BG_COLOR = 'shareBgColor';
 const String KEY_BG_IMAGE = 'shareBgImage';
 
 class ImageShare extends StatefulWidget {
-  final String name, text, author;
+  final String text, author;
 
-  const ImageShare(String this.name, String this.text, String this.author);
+  const ImageShare(String this.text, String this.author);
 
   @override
-  ImageShareState createState() => ImageShareState(name, text, author);
+  ImageShareState createState() => ImageShareState(text, author);
 }
 
 const Color DEFAULT_BG_COLOR = Color.fromARGB(255, 224, 224, 224);
@@ -34,9 +34,15 @@ const String DEFAULT_BG_IMAGE = 'assets/bgarts/1.png';
 const bool DEFAULT_USE_IMG_BG = true;
 
 class ImageShareState extends State<ImageShare> {
-  String name, text, author;
+  String text, author;
+  bool isEditing = false, textFocussed = false;
+  late TextEditingController writeTextController;
 
-  ImageShareState(String this.name, String this.text, String this.author);
+  ImageShareState(String this.text, String this.author) {
+    if (text.isEmpty) {
+      isEditing = true;
+    }
+  }
 
   GlobalKey globalKey = GlobalKey();
   late Uint8List pngBytes;
@@ -105,14 +111,11 @@ class ImageShareState extends State<ImageShare> {
     ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     setState(() {
       pngBytes = byteData!.buffer.asUint8List();
-      clicked = true;
     });
   }
 
   Future<void> shareImage() async {
-    if (!clicked) {
-      await _capturePng();
-    }
+    await _capturePng();
     final box = context.findRenderObject() as RenderBox?;
     Share.shareXFiles([XFile.fromData(pngBytes, mimeType: 'image/png')],
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
@@ -122,6 +125,7 @@ class ImageShareState extends State<ImageShare> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    writeTextController = TextEditingController();
     updateLastSettings();
   }
 
@@ -148,7 +152,57 @@ class ImageShareState extends State<ImageShare> {
                   )
                       : null,
                   padding: EdgeInsets.all(10),
-                  child: Column(
+                  child: isEditing ?
+                  Focus(
+                      onFocusChange: (focus) => setState(() {
+                        textFocussed = focus;
+                      }),
+                      child: CupertinoTextField(
+                        autofocus: true,
+                        keyboardType: TextInputType.multiline,
+                        controller: writeTextController,
+                        maxLines: null,
+                        decoration: null,
+                        placeholderStyle: TextStyle(
+                            shadows: useImgBg
+                                ? <Shadow>[
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 3.0,
+                                color: CupertinoColors.secondaryLabel,
+                              )
+                            ]
+                                : null,
+                            fontFamily: font,
+                            color: CupertinoColors.systemGrey,
+                            fontSize: LARGE_FONTSIZE),
+                        style: TextStyle(
+                            shadows: useImgBg
+                                ? <Shadow>[
+                              Shadow(
+                                offset: Offset(1.0, 1.0),
+                                blurRadius: 3.0,
+                                color: CupertinoColors.secondaryLabel,
+                              )
+                            ]
+                                : null,
+                            fontFamily: font,
+                            color: CupertinoColors.black,
+                            fontSize: LARGE_FONTSIZE),
+                        suffix: textFocussed
+                            ? CupertinoButton(
+                          child: new Icon(CupertinoIcons
+                              .checkmark_circle),
+                          onPressed: () {
+                            FocusManager.instance.primaryFocus
+                                ?.unfocus();
+                          },
+                        )
+                            : SizedBox.shrink(),
+                        placeholder: L10n.of(context)
+                            .resource('enterTextMessage'),
+                      ))
+                      : Column(
                     children: <Widget>[
                       Text(text,
                           style: TextStyle(
@@ -223,8 +277,8 @@ class ImageShareState extends State<ImageShare> {
             ),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               CupertinoButton(
-                onPressed: shareImage,
-                child: Icon(CupertinoIcons.share),
+                onPressed: textFocussed ? null : shareImage,
+                child: Icon(CupertinoIcons.share, color: textFocussed ? CupertinoColors.systemGrey : CupertinoColors.activeBlue,),
               )
             ]),
           ]),

@@ -173,7 +173,7 @@ class _AllQuotesPageState extends State<AllQuotesPage> {
           builder: (BuildContext context) => Dialog(
               backgroundColor:
                   CupertinoTheme.of(context).scaffoldBackgroundColor,
-              child: ImageShare(name, quote, author))).then((value) {
+              child: ImageShare(quote, author))).then((value) {
         counter++;
         if (counter == 2) {
           _loadAd();
